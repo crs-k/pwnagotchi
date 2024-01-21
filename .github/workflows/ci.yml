@@ -1,0 +1,19 @@
+name: Test armv6l cpu option
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: pguyot/arm-runner-action@v2.5.2
+      with:
+        cpu: arm1176
+        commands: |
+            echo "Minimal"
+            test `uname -m` = 'armv6l'
