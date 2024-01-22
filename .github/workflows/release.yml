@@ -22,22 +22,14 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
 
-    # - name: Set VERSION variable
-    #   run: |
-    #     VERSION=$(awk '/__version__ /{print $NF}' ./pwnagotchi/_version.py | tr -d "'")
-    #   env:
-    #     VERSION: ${{ steps.set-version.outputs.version }}  # Use the extracted version
-    
     - name: Show Version
       run: |
-        # Use the $VERSION variable in your build or deployment steps
         echo "Using VERSION: ${{ inputs.release_version }}"
 
     - name: Set _version.py correctly using the env variable
-      run: |
-        sed -i "s#.*__version__.*#__version__='$PWN_VERSION'#" pwnagotchi/_version.py
+      run: sed -i "s#.*__version__.*#__version__='$PWN_VERSION'#" pwnagotchi/_version.py
       env: 
         PWN_VERSION: ${{ inputs.release_version }}
 
@@ -65,8 +57,7 @@ jobs:
         args: ${{ inputs.z_compress_args }} pwnagotchi-raspios-lite-${{ inputs.release_version }}.7z ./pwnagotchi-raspios-lite-${{ inputs.release_version }}.img
 
     - name: sha256sum 7z
-      run: |
-        sudo sha256sum ./pwnagotchi-raspios-lite-${{ inputs.release_version }}.7z >  ./pwnagotchi-raspios-lite-${{ inputs.release_version }}.sha256
+      run: sudo sha256sum ./pwnagotchi-raspios-lite-${{ inputs.release_version }}.7z >  ./pwnagotchi-raspios-lite-${{ inputs.release_version }}.sha256
 
     - name: Create GitHub Release
       id: create_new_release
@@ -75,7 +66,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ inputs.release_version }}
-        release_name: {{ inputs.release_version }}
+        release_name: ${{ inputs.release_version }}
+
     - name: Upload GitHub Release sha
       uses: actions/upload-release-asset@v1
       env: 
@@ -85,6 +77,7 @@ jobs:
         asset_path: ./pwnagotchi-raspios-lite-${{ inputs.release_version }}.sha256
         asset_name: pwnagotchi-v${{ inputs.release_version }}.sha256
         asset_content_type: appliction/text
+
     - name: Upload GitHub Release Zip
       uses: actions/upload-release-asset@v1
       env: 
@@ -94,4 +87,3 @@ jobs:
         asset_path: ./pwnagotchi-raspios-lite-${{ inputs.release_version }}.7z
         asset_name: pwnagotchi-v${{ inputs.release_version }}.7z
         asset_content_type: appliction/zip
-

@@ -253,13 +253,13 @@
       dest: /usr/local/src/pwnagotchi-plugins-contrib
     register: pwnagotchi_plugin
 
-  - name: Copy mastodon.py
-    copy:
-      src: /usr/local/src/pwnagotchi-plugins-contrib/mastodon.py
-      dest: /usr/local/share/pwnagotchi/custom-plugins/mastodon.py
-      owner: root
-      group: root
-      mode: '644'
+  # - name: Copy mastodon.py
+  #   copy:
+  #     src: /usr/local/src/pwnagotchi-plugins-contrib/mastodon.py
+  #     dest: /usr/local/share/pwnagotchi/custom-plugins/mastodon.py
+  #     owner: root
+  #     group: root
+  #     mode: '644'
 
   - name: Copy aircrackonly.py
     copy:
@@ -398,47 +398,47 @@
       executable: /bin/bash
       chdir: /usr/local/src/nexmon/ 
 
-  - name: choose the right kernel version (bcm43430a1)
+  - name: choose the right kernel version (bcm43436b0)
     replace:
-      dest: /usr/local/src/nexmon/patches/bcm43430a1/7_45_41_46/nexmon/Makefile
+      dest: /usr/local/src/nexmon/patches/bcm43436b0/9_88_4_65/nexmon/Makefile
       backup: no
       regexp: "KERNEL_VERSION = .*$"
       replace: "KERNEL_VERSION = 5.10"
 
-  - name: choose the right kernel release (variable) (bcm43430a1)
+  - name: choose the right kernel release (variable) (bcm43436b0)
     lineinfile:
-      dest: /usr/local/src/nexmon/patches/bcm43430a1/7_45_41_46/nexmon/Makefile
+      dest: /usr/local/src/nexmon/patches/bcm43436b0/9_88_4_65/nexmon/Makefile
       insertafter: "DRIVER_FOLDER_NAME = .*$"
       line: "KERNEL_RELEASE = 5.10.103-v7+"
 
-  - name: choose the right kernel release (replace string) (bcm43430a1)
+  - name: choose the right kernel release (replace string) (bcm43436b0)
     replace:
-      dest: /usr/local/src/nexmon/patches/bcm43430a1/7_45_41_46/nexmon/Makefile
+      dest: /usr/local/src/nexmon/patches/bcm43436b0/9_88_4_65/nexmon/Makefile
       backup: no
       regexp: "shell uname -r"
       replace: "KERNEL_RELEASE"
 
-  - name: make firmware patch (bcm43430a1)
-    shell: "source ./setup_env.sh && cd /usr/local/src/nexmon/patches/bcm43430a1/7_45_41_46/nexmon/ && make"
+  - name: make firmware patch (bcm43436b0)
+    shell: "source ./setup_env.sh && cd /usr/local/src/nexmon/patches/bcm43436b0/9_88_4_65/nexmon/ && make"
     args:
       executable: /bin/bash
       chdir: /usr/local/src/nexmon/
 
   # - name: backup original firmware
-  #   shell: "source ./setup_env.sh && cd /usr/local/src/nexmon/patches/bcm43430a1/7_45_41_46/nexmon/ && make backup-firmware"
+  #   shell: "source ./setup_env.sh && cd /usr/local/src/nexmon/patches/bcm43436b0/9_88_4_65/nexmon/ && make backup-firmware"
   #   args:
   #     executable: /bin/bash
   #     chdir: /usr/local/src/nexmon/
 
   # - name: install new firmware
-  #   shell: "source ./setup_env.sh && cd /usr/local/src/nexmon/patches/bcm43430a1/7_45_41_46/nexmon/ && make install-firmware"
+  #   shell: "source ./setup_env.sh && cd /usr/local/src/nexmon/patches/bcm43436b0/9_88_4_65/nexmon/ && make install-firmware"
   #   args:
   #     executable: /bin/bash
   #     chdir: /usr/local/src/nexmon/
 
-  - name: install new firmware (bcm43430a1)
+  - name: install new firmware (bcm43436b0)
     copy:
-      src: /usr/local/src/nexmon/patches/bcm43430a1/7_45_41_46/nexmon/brcmfmac43436-sdio.bin
+      src: /usr/local/src/nexmon/patches/bcm43436b0/9_88_4_65/nexmon/brcmfmac43436-sdio.bin
       dest: /lib/firmware/brcm/brcmfmac43436-sdio.bin
 
   - name: choose the right kernel version (bcm43430a1)
@@ -644,12 +644,12 @@
 #      line: "# main.plugins.ups_hat_c.enabled = true\n# main.plugins.ups_hat_c.label_on = true  # show BAT label or just percentage\n# main.plugins.ups_hat_c.shutdown = 5  # battery percent at which the device will turn off\n# main.plugins.ups_hat_c.bat_x_coord = 140\n# main.plugins.ups_hat_c.bat_y_coord = 0"
 #      insertafter: EOF
 
-  - name: Reconfigure auto-update to point to the aluminum-ice repo (bizzarely changing the plugin code directly reverts to the old string)
+  - name: Reconfigure auto-update to point to the crs-k repo (bizzarely changing the plugin code directly reverts to the old string)
     replace:
       dest: /usr/local/lib/python3.7/dist-packages/pwnagotchi/plugins/default/auto-update.py
       backup: no
       regexp: "evilsocket/pwnagotchi"
-      replace: "aluminum-ice/pwnagotchi"
+      replace: "crs-k/pwnagotchi"
 
   - name: Delete unnecessary large folder to save space (/root/go) 
     file:
@@ -702,23 +702,20 @@
       content: |
         (◕‿‿◕) {{pwnagotchi.hostname}}
 
-        Hi! I'm a pwnagotchi, please take good care of me!
-        Here are some basic things you need to know to raise me properly!
+        Change config: /etc/pwnagotchi/config.toml
 
-        If you want to change my configuration, use /etc/pwnagotchi/config.toml
-
-        All the configuration options can be found on /etc/pwnagotchi/default.toml,
-        but don't change this file because I will recreate it every time I'm restarted!
+        List of options: /etc/pwnagotchi/default.toml,
+        Don't change this file because I will recreate it every time I'm restarted!
 
         I'm managed by systemd. Here are some basic commands.
 
-        If you want to know what I'm doing, you can check my logs with the command
+        Check logs:
         tail -f /var/log/pwnagotchi.log
 
-        If you want to know if I'm running, you can use
+        Service status:
         systemctl status pwnagotchi
 
-        You can restart me using
+        Restart service:
         systemctl restart pwnagotchi
 
         But be aware I will go into MANUAL mode when restarted!
