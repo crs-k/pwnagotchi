@@ -13,7 +13,8 @@ jobs:
     - uses: actions/checkout@v4
     - uses: pguyot/arm-runner-action@v2.5.2
       with:
-        base_image: https://github.com/evilsocket/pwnagotchi/releases/download/v1.5.5/pwnagotchi-raspbian-lite-v1.5.5.zip
         cpu: arm1176
         commands: |
-          echo "abcd1234"
+            echo "install attempt"
+            sudo pip3 install -r requirements.txt
+            sudo pip3 install .
