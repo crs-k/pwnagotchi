@@ -12,4 +12,4 @@ jobs:
         base_image: https://github.com/crs-k/pwnagotchi/releases/download/0.3.0/pwnagotchi-v0.3.0.7z
         cpu: arm1176
         commands: |
-          sudo ./setup.py
+          tail ./setup.py
