@@ -16,5 +16,6 @@ jobs:
         cpu: arm1176
         commands: |
             echo "install attempt"
+            sudo apt-get install python3-pip
             sudo pip3 install -r requirements.txt
             sudo pip3 install .
