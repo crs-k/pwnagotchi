@@ -17,5 +17,5 @@ jobs:
         commands: |
             echo "install attempt"
             sudo apt-get install python3-pip
-            sudo pip3 install -r requirements.txt
-            sudo pip3 install .
+            sudo pip3 install -r requirements.txt --no-input
+            sudo pip3 install . --no-input
