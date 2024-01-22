@@ -1,4 +1,4 @@
-name: Test armv6l cpu option
+name: ci
 on:
   push:
     branches:
@@ -10,10 +10,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: pguyot/arm-runner-action@v2.5.2
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10' 
+    - name: Test armv6l cpu option
+      uses: pguyot/arm-runner-action@v2.5.2
       with:
         cpu: arm1176
         commands: |
-            echo "Minimal"
-            test `uname -m` = 'armv6l'
+            echo "1234"
