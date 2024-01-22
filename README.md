@@ -1,11 +1,15 @@
 # Pwnagotchi
 
 <p align="center">
-    <a href="https://github.com/aluminum-ice/pwnagotchi/releases/latest"><img alt="Release" src="https://img.shields.io/github/release/aluminum-ice/pwnagotchi.svg?style=flat-square"></a>
+    <a href="https://github.com/crs-k/pwnagotchi/releases/latest"><img alt="Release" src="https://img.shields.io/github/release/crs-k/pwnagotchi.svg?style=flat-square"></a>
     <a href="https://github.com/evilsocket/pwnagotchi/blob/master/LICENSE.md"><img alt="Software License" src="https://img.shields.io/badge/license-GPL3-brightgreen.svg?style=flat-square"></a>
-    <a href="https://github.com/evilsocket/aluminum-ice/graphs/contributors"><img alt="Contributors" src="https://img.shields.io/github/contributors/aluminum-ice/pwnagotchi"/></a>
+    <a href="https://github.com/crs-k/graphs/contributors"><img alt="Contributors" src="https://img.shields.io/github/contributors/crs-k/pwnagotchi"/></a>
     <a href="https://twitter.com/intent/follow?screen_name=pwnagotchi"><img src="https://img.shields.io/twitter/follow/pwnagotchi?style=social&logo=twitter" alt="follow on Twitter"></a>
 </p>
+
+This is a fork of this [forked project](https://github.com/aluminum-ice/pwnagotchi).
+
+---
 
 This is a fork of the [original pwnagotchi project](https://github.com/evilsocket/pwnagotchi). I have heavily updated my fork to enable pwnagotchi to run well on a Raspberry Pi Zero 2 W. Major changes include:
 
