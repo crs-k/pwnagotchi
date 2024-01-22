@@ -9,7 +9,7 @@ jobs:
     - uses: actions/checkout@v4
     - uses: pguyot/arm-runner-action@v2.5.2
       with:
-        base_image: https://github.com/radxa/rock-pi-s-images-released/releases/download/rock-pi-s-v20210924/rockpis_debian_buster_server_arm64_20210924_0412-gpt.img.gz
+        base_image: https://github.com/crs-k/pwnagotchi/releases/download/0.3.0/pwnagotchi-v0.3.0.7z
         cpu: arm1176
         commands: |
           tail /etc/pwnagotchi/config.toml
