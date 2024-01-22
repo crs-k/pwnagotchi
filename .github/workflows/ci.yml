@@ -16,4 +16,4 @@ jobs:
         base_image: https://github.com/evilsocket/pwnagotchi/releases/download/v1.5.5/pwnagotchi-raspbian-lite-v1.5.5.zip
         cpu: arm1176
         commands: |
-          ls
+          echo "abcd1234"
