@@ -5,7 +5,6 @@ import re
 
 
 
-from pwnagotchi._version import __version__
 
 _name = None
 config = None

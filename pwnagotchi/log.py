@@ -197,7 +197,7 @@ class LastSession(object):
                 lines.reverse()
 
             if len(lines) == 0:
-                lines.append("Initial Session");
+                lines.append("Initial Session")
 
             ui.on_reading_logs()
 

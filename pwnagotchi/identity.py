@@ -54,7 +54,7 @@ class KeyPair(object):
                 self._view.on_starting()
                 return
 
-            except Exception as e:
+            except Exception:
                 # if we're here, loading the keys broke something ...
                 logging.exception("error loading keys, maybe corrupted, deleting and regenerating ...")
                 try:

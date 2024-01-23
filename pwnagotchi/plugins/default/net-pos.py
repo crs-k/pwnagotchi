@@ -33,7 +33,7 @@ class NetPos(plugins.Plugin):
             self.API_URL = self.options['api_url']
         self.ready = True
         logging.info("net-pos plugin loaded.")
-        logging.debug(f"net-pos: use api_url: {self.API_URL}");
+        logging.debug(f"net-pos: use api_url: {self.API_URL}")
 
     def _append_saved(self, path):
         to_save = list()

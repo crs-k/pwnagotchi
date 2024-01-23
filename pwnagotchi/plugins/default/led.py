@@ -63,7 +63,7 @@ class Led(plugins.Plugin):
                     self._blink(pattern)
                 else:
                     logging.debug("[led] no pattern defined for %s" % self._event_name)
-            except Exception as e:
+            except Exception:
                 logging.exception("[led] error while blinking")
 
             finally:

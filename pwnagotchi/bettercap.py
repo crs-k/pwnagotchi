@@ -1,4 +1,3 @@
-import json
 import logging
 import requests
 import websockets
@@ -108,7 +107,7 @@ class Client(object):
         while True:
             try:
                 r = requests.post("%s/session" % self.url, auth=self.auth, json={'cmd': command})
-            except requests.exceptions.ConnectionError as e:
+            except requests.exceptions.ConnectionError:
                 sleep_time = min_sleep + max_sleep*random.random()
                 logging.warning("can't run my request... connection to the bettercap endpoint failed...")
                 logging.warning('retrying run in {} sec'.format(sleep_time))

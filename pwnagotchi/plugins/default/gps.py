@@ -32,7 +32,7 @@ class GPS(plugins.Plugin):
             try:
                 agent.run("gps off")
             except Exception:
-                logging.info(f"bettercap gps module was already off")
+                logging.info("bettercap gps module was already off")
                 pass
 
             agent.run(f"set gps.device {self.options['device']}")

@@ -1,4 +1,3 @@
-import os
 import logging
 from pwnagotchi.voice import Voice
 import pwnagotchi.plugins as plugins

@@ -21,7 +21,7 @@ from flask import request
 from flask import jsonify
 from flask import abort
 from flask import redirect
-from flask import render_template, render_template_string
+from flask import render_template
 
 
 class Handler:

@@ -4,7 +4,6 @@ import glob
 import zipfile
 from io import BytesIO
 
-import pwnagotchi
 import pwnagotchi.plugins as plugins
 
 from flask import redirect, send_from_directory, render_template_string, send_file

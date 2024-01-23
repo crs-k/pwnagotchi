@@ -48,7 +48,6 @@
 import time
 import spidev
 import RPi.GPIO as GPIO
-from PIL import Image
 
 # Pin definition
 RST_PIN = 17
@@ -85,7 +84,7 @@ def module_init():
     GPIO.setup(BUSY_PIN, GPIO.IN)
     SPI.max_speed_hz = 2000000
     SPI.mode = 0b00
-    return 0;
+    return 0
 
 
 # Display resolution
