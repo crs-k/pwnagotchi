@@ -35,7 +35,7 @@ jobs:
       run: |
         pip install ruff
         ruff --output-format=github .
-        continue-on-error: true
+      continue-on-error: true
 
   Test-Unit:
     name: Test - Unit
