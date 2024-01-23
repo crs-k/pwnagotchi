@@ -38,7 +38,7 @@ jobs:
       with:
         cpu: arm1176
         commands: |
-            echo "1234"
+            echo "ARM TEST"
     - name: Lint with Ruff
       run: |
         pip install ruff

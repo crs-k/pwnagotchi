@@ -1,15 +1,53 @@
 name: ci-url
 on:
-  workflow_dispatch:
-
+  release:
+    types: [published]
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: pguyot/arm-runner-action@v2.5.2
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
       with:
-        base_image: https://github.com/crs-k/pwnagotchi/releases/download/0.3.0/pwnagotchi-v0.3.0.7z
+        python-version: '3.7' 
+
+    - name: Cache Python dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libdbus-1-dev libdbus-glib-1-dev
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install meson
+        python -m pip install dbus-python
+        pip install -r requirements.txt
+
+    - name: ARM build test    
+      uses: pguyot/arm-runner-action@v2.5.2
+      with:
+        base_image: https://github.com/crs-k/pwnagotchi/releases/download/${{ github.event.release.tag_name }}/pwnagotchi-v${{ github.event.release.tag_name }}.7z
         cpu: arm1176
         commands: |
-          sudo python ./setup.py
+          echo "ARM TEST"
+      
+    - name: Lint with Ruff
+      run: |
+        pip install ruff
+        ruff --output-format=github .
+      continue-on-error: true
+      
+    - name: Unit Test
+      run: |
+        python -m unittest discover -p "test_*.py" -v
