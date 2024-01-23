@@ -20,6 +20,7 @@ class GPS(plugins.Plugin):
     def __init__(self):
         self.running = False
         self.coordinates = None
+        self.options = dict()
 
     def on_loaded(self):
         logging.info(f"gps plugin loaded for {self.options['device']}")
@@ -32,7 +33,7 @@ class GPS(plugins.Plugin):
             try:
                 agent.run("gps off")
             except Exception:
-                logging.info(f"bettercap gps module was already off")
+                logging.info("bettercap gps module was already off")
                 pass
 
             agent.run(f"set gps.device {self.options['device']}")
@@ -97,7 +98,7 @@ class GPS(plugins.Plugin):
                 lat_pos = (127, 74)
                 lon_pos = (122, 84)
                 alt_pos = (127, 94)
-            elif ui.is_waveshare27inch():
+            elif ui.is_waveshare2in7():
                 lat_pos = (6, 120)
                 lon_pos = (1, 135)
                 alt_pos = (6, 150)
@@ -151,12 +152,13 @@ class GPS(plugins.Plugin):
             ui.remove_element('altitude')
 
     def on_ui_update(self, ui):
-        if self.coordinates and all([
-            # avoid 0.000... measurements
-            self.coordinates["Latitude"], self.coordinates["Longitude"]
-        ]):
-            # last char is sometimes not completely drawn ¯\_(ツ)_/¯
-            # using an ending-whitespace as workaround on each line
-            ui.set("latitude", f"{self.coordinates['Latitude']:.4f} ")
-            ui.set("longitude", f"{self.coordinates['Longitude']:.4f} ")
-            ui.set("altitude", f"{self.coordinates['Altitude']:.1f}m ")
+        with ui._lock:
+            if self.coordinates and all([
+                # avoid 0.000... measurements
+                self.coordinates["Latitude"], self.coordinates["Longitude"]
+            ]):
+                # last char is sometimes not completely drawn ¯\_(ツ)_/¯
+                # using an ending-whitespace as workaround on each line
+                ui.set("latitude", f"{self.coordinates['Latitude']:.4f} ")
+                ui.set("longitude", f"{self.coordinates['Longitude']:.4f} ")
+                ui.set("altitude", f"{self.coordinates['Altitude']:.1f}m ")

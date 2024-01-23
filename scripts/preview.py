@@ -3,7 +3,6 @@ import sys
 import os
 import argparse
 import yaml
-import toml
 
 sys.path.insert(0,
                 os.path.join(os.path.dirname(os.path.realpath(__file__)),
@@ -89,8 +88,7 @@ def main():
     parser = argparse.ArgumentParser(description="This program emulates\
                                      the pwnagotchi display")
     parser.add_argument('--displays', help="Which displays to use.", nargs="+", default=["waveshare_2"])
-    parser.add_argument('--lang', help="Language to use",
-                        default="en")
+    parser.add_argument('--lang', help="Language to use", default="en")
     parser.add_argument('--output', help="Path to output image (PNG)", default="preview.png")
     parser.add_argument('--show-peer', dest="showpeer", help="This options will show a dummy peer", action="store_true")
     parser.add_argument('--xmargin', help="Add X-Margin", type=int, default=5)
@@ -116,6 +114,7 @@ def main():
                 enabled: true
                 address: '::'
                 port: 8080
+
         faces:
             look_r: '( ⚆_⚆)'
             look_l: '(☉_☉ )'

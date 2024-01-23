@@ -1,4 +1,3 @@
-import json
 import logging
 import requests
 import websockets
@@ -8,14 +7,16 @@ import random
 from requests.auth import HTTPBasicAuth
 from time import sleep
 
-requests.adapters.DEFAULT_RETRIES = 5 # increase retries number
 
-ping_timeout  = 180
+requests.adapters.DEFAULT_RETRIES = 5  # increase retries number
+
+ping_timeout = 180
 ping_interval = 15
 max_queue = 10000
 
 min_sleep = 0.5
 max_sleep = 5.0
+
 
 def decode(r, verbose_errors=True):
     try:
@@ -68,9 +69,10 @@ class Client(object):
 
         # restarted every time the connection fails
         while True:
-            logging.info("creating new websocket...")
-            try: 
-                async with websockets.connect(s, ping_interval=ping_interval, ping_timeout=ping_timeout, max_queue=max_queue) as ws:
+            logging.info("[bettercap] creating new websocket...")
+            try:
+                async with websockets.connect(s, ping_interval=ping_interval, ping_timeout=ping_timeout,
+                                              max_queue=max_queue) as ws:
                     # listener loop
                     while True:
                         try:
@@ -78,40 +80,39 @@ class Client(object):
                                 try:
                                     await consumer(msg)
                                 except Exception as ex:
-                                        logging.debug("error while parsing event (%s)", ex)
-                        except websockets.exceptions.ConnectionClosedError:
-                            try: 
+                                    logging.debug("[bettercap] error while parsing event (%s)", ex)
+                        except websockets.ConnectionClosedError:
+                            try:
                                 pong = await ws.ping()
                                 await asyncio.wait_for(pong, timeout=ping_timeout)
-                                logging.warning('ping OK, keeping connection alive...')
+                                logging.warning('[bettercap] ping OK, keeping connection alive...')
                                 continue
                             except:
                                 sleep_time = min_sleep + max_sleep*random.random()
-                                logging.warning('ping error - retrying connection in {} sec'.format(sleep_time))
+                                logging.warning('[bettercap] ping error - retrying connection in {} sec'.format(sleep_time))
                                 await asyncio.sleep(sleep_time)
                                 break
             except ConnectionRefusedError:
                 sleep_time = min_sleep + max_sleep*random.random()
-                logging.warning('nobody seems to be listening at the bettercap endpoint...')
-                logging.warning('retrying connection in {} sec'.format(sleep_time))
+                logging.warning('[bettercap] nobody seems to be listening at the bettercap endpoint...')
+                logging.warning('[bettercap] retrying connection in {} sec'.format(sleep_time))
                 await asyncio.sleep(sleep_time)
                 continue
             except OSError:
-                sleep_time = min_sleep + max_sleep*random.random()
+                sleep_time = min_sleep + max_sleep * random.random()
                 logging.warning('connection to the bettercap endpoint failed...')
                 logging.warning('retrying connection in {} sec'.format(sleep_time))
                 await asyncio.sleep(sleep_time)
                 continue
 
-
     def run(self, command, verbose_errors=True):
         while True:
             try:
                 r = requests.post("%s/session" % self.url, auth=self.auth, json={'cmd': command})
-            except requests.exceptions.ConnectionError as e:
+            except requests.exceptions.ConnectionError:
                 sleep_time = min_sleep + max_sleep*random.random()
-                logging.warning("can't run my request... connection to the bettercap endpoint failed...")
-                logging.warning('retrying run in {} sec'.format(sleep_time))
+                logging.warning("[bettercap] can't run my request... connection to the bettercap endpoint failed...")
+                logging.warning('[bettercap] retrying run in {} sec'.format(sleep_time))
                 sleep(sleep_time)
             else:
                 break

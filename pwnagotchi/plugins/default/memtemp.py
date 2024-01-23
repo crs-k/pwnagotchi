@@ -41,6 +41,7 @@ class MemTemp(plugins.Plugin):
     ALLOWED_FIELDS = {
         'mem': 'mem_usage',
         'cpu': 'cpu_load',
+        'cpus': 'cpu_load_since',
         'temp': 'cpu_temp',
         'freq': 'cpu_freq'
     }
@@ -49,7 +50,11 @@ class MemTemp(plugins.Plugin):
     LABEL_SPACING = 0
     FIELD_WIDTH = 4
 
+    def __init__(self):
+        self.options = dict()
+
     def on_loaded(self):
+        self._last_cpu_load = self._cpu_stat()
         logging.info("memtemp plugin loaded.")
 
     def mem_usage(self):
@@ -57,6 +62,28 @@ class MemTemp(plugins.Plugin):
 
     def cpu_load(self):
         return f"{int(pwnagotchi.cpu_load() * 100)}%"
+
+    def _cpu_stat(self):
+        """
+        Returns the splitted first line of the /proc/stat file
+        """
+        with open('/proc/stat', 'rt') as fp:
+            return list(map(int, fp.readline().split()[1:]))
+
+    def cpu_load_since(self):
+        """
+        Returns the % load, since last time called
+        """
+        parts0 = self._cpu_stat()
+        parts1 = self._last_cpu_load
+        self._last_cpu_load = parts0
+
+        parts_diff = [p1 - p0 for (p0, p1) in zip(parts0, parts1)]
+        user, nice, sys, idle, iowait, irq, softirq, steal, _guest, _guest_nice = parts_diff
+        idle_sum = idle + iowait
+        non_idle_sum = user + nice + sys + irq + softirq + steal
+        total = idle_sum + non_idle_sum
+        return f"{int(non_idle_sum / total * 100)}%"
 
     def cpu_temp(self):
         if self.options['scale'] == "fahrenheit":
@@ -117,7 +144,7 @@ class MemTemp(plugins.Plugin):
             elif ui.is_inky():
                 h_pos = (140, 68)
                 v_pos = (160, 54)
-            elif ui.is_waveshare27inch():
+            elif ui.is_waveshare2in7():
                 h_pos = (192, 138)
                 v_pos = (211, 122)
             else:
@@ -175,10 +202,11 @@ class MemTemp(plugins.Plugin):
                 ui.remove_element('memtemp_data')
 
     def on_ui_update(self, ui):
-        if self.options['orientation'] == "vertical":
-            for idx, field in enumerate(self.fields):
-                ui.set(f"memtemp_{field}", getattr(self, self.ALLOWED_FIELDS[field])())
-        else:
-            # default to horizontal
-            data = " ".join([self.pad_text(getattr(self, self.ALLOWED_FIELDS[x])()) for x in self.fields])
-            ui.set('memtemp_data', data)
+        with ui._lock:
+            if self.options['orientation'] == "vertical":
+                for idx, field in enumerate(self.fields):
+                    ui.set(f"memtemp_{field}", getattr(self, self.ALLOWED_FIELDS[field])())
+            else:
+                # default to horizontal
+                data = " ".join([self.pad_text(getattr(self, self.ALLOWED_FIELDS[x])()) for x in self.fields])
+                ui.set('memtemp_data', data)

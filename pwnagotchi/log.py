@@ -17,8 +17,8 @@ LAST_SESSION_FILE = '/root/.pwnagotchi-last-session'
 
 class LastSession(object):
     EPOCH_TOKEN = '[epoch '
-    EPOCH_PARSER = re.compile(r'^.+\[epoch (\d+)\] (.+)')
-    EPOCH_DATA_PARSER = re.compile(r'([a-z_]+)=([^\s]+)')
+    EPOCH_PARSER = re.compile(r'^.+\[epoch (\d+)] (.+)')
+    EPOCH_DATA_PARSER = re.compile(r'([a-z_]+)=(\S+)')
     TRAINING_TOKEN = ' training epoch '
     START_TOKEN = 'connecting to http'
     DEAUTH_TOKEN = 'deauthing '
@@ -46,7 +46,7 @@ class LastSession(object):
         self.max_reward = -1000
         self.avg_reward = 0
         self._peer_parser = re.compile(
-            'detected unit (.+)@(.+) \(v.+\) on channel \d+ \(([\d\-]+) dBm\) \[sid:(.+) pwnd_tot:(\d+) uptime:(\d+)\]')
+            'detected unit (.+)@(.+) \(v.+\) on channel \d+ \(([\d\-]+) dBm\) \[sid:(.+) pwnd_tot:(\d+) uptime:(\d+)]')
         self.parsed = False
 
     def _get_last_saved_session_id(self):
@@ -197,7 +197,7 @@ class LastSession(object):
                 lines.reverse()
 
             if len(lines) == 0:
-                lines.append("Initial Session");
+                lines.append("Initial Session")
 
             ui.on_reading_logs()
 
@@ -208,6 +208,8 @@ class LastSession(object):
             logging.debug("parsing last session logs (%d lines) ..." % len(lines))
 
             self._parse_stats()
+
+            self.save_session_id()
         self.parsed = True
 
     def is_new(self):
@@ -221,7 +223,7 @@ def setup_logging(args, config):
     formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
     root = logging.getLogger()
 
-    root.setLevel(logging.DEBUG if args.debug or cfg['debug']==True else logging.INFO)
+    root.setLevel(logging.DEBUG if args.debug else logging.INFO)
 
     if filename:
         # since python default log rotation might break session data in different files,
@@ -237,9 +239,9 @@ def setup_logging(args, config):
     root.addHandler(console_handler)
 
     if not args.debug:
-        # disable scapy and tensorflow logging
+        # disable scapy and torch logging
         logging.getLogger("scapy").disabled = True
-        logging.getLogger('tensorflow').disabled = True
+        logging.getLogger('torch').disabled = True
         # https://stackoverflow.com/questions/15777951/how-to-suppress-pandas-future-warning
         warnings.simplefilter(action='ignore', category=FutureWarning)
         warnings.simplefilter(action='ignore', category=DeprecationWarning)

@@ -25,6 +25,7 @@ class OnlineHashCrack(plugins.Plugin):
             self.report = StatusFile('/root/.ohc_uploads', data_format='json')
         self.skip = list()
         self.lock = Lock()
+        self.options = dict()
 
     def on_loaded(self):
         """

@@ -7,6 +7,7 @@ import platform
 import shutil
 import glob
 from threading import Lock
+import time
 
 import pwnagotchi
 import pwnagotchi.plugins as plugins
@@ -28,6 +29,7 @@ def check(version, repo, native=True):
     latest = resp.json()
     info['available'] = latest_ver = latest['tag_name'].replace('v', '')
     is_arm = info['arch'].startswith('arm')
+    is_arm64 = info['arch'].startswith('aarch')
 
     local = version_to_tuple(info['current'])
     remote = version_to_tuple(latest_ver)
@@ -35,19 +37,28 @@ def check(version, repo, native=True):
         if not native:
             info['url'] = "https://github.com/%s/archive/%s.zip" % (repo, latest['tag_name'])
         else:
-            # check if this release is compatible with arm6
-            for asset in latest['assets']:
-                download_url = asset['browser_download_url']
-                if download_url.endswith('.zip') and (
-                        info['arch'] in download_url or (is_arm and 'armhf' in download_url)):
-                    info['url'] = download_url
-                    break
+            if is_arm:
+                # check if this release is compatible with arm
+                for asset in latest['assets']:
+                    download_url = asset['browser_download_url']
+                    if (download_url.endswith('.zip') and
+                            (info['arch'] in download_url or (is_arm and 'arm' in download_url))):
+                        info['url'] = download_url
+                        break
+            elif is_arm64:
+                # check if this release is compatible with aarch64
+                for asset in latest['assets']:
+                    download_url = asset['browser_download_url']
+                    if (download_url.endswith('.zip') and
+                            (info['arch'] in download_url or (is_arm64 and 'aarch64' in download_url))):
+                        info['url'] = download_url
+                        break
 
     return info
 
 
 def make_path_for(name):
-    path = os.path.join("/tmp/updates/", name)
+    path = os.path.join("/usr/local/src/", name)
     if os.path.exists(path):
         logging.debug("[update] deleting %s" % path)
         shutil.rmtree(path, ignore_errors=True, onerror=None)
@@ -97,6 +108,7 @@ def verify(name, path, source_path, display, update):
 
 
 def install(display, update):
+
     name = update['repo'].split('/')[1]
 
     path = make_path_for(name)
@@ -118,7 +130,8 @@ def install(display, update):
 
         logging.info("[update] stopping %s ..." % update['service'])
         os.system("service %s stop" % update['service'])
-        os.system("mv %s %s" % (source_path, dest_path))
+        shutil.move(source_path, dest_path)
+        os.chmod("/usr/local/bin/%s" % name, 0o755)
         logging.info("[update] restarting %s ..." % update['service'])
         os.system("service %s start" % update['service'])
     else:
@@ -127,7 +140,6 @@ def install(display, update):
 
         # setup.py is going to install data files for us
         os.system("cd %s && pip3 install ." % source_path)
-
     return True
 
 
@@ -151,6 +163,7 @@ class AutoUpdate(plugins.Plugin):
         self.ready = False
         self.status = StatusFile('/root/.auto-update')
         self.lock = Lock()
+        self.options = dict()
 
     def on_loaded(self):
         if 'interval' not in self.options or ('interval' in self.options and not self.options['interval']):
@@ -169,7 +182,7 @@ class AutoUpdate(plugins.Plugin):
             if not self.ready:
                 return
 
-            if self.status.newer_then_hours(self.options['interval']):
+            if self.status.newer_than_hours(self.options['interval']):
                 logging.debug("[update] last check happened less than %d hours ago" % self.options['interval'])
                 return
 
@@ -183,14 +196,17 @@ class AutoUpdate(plugins.Plugin):
 
                 to_install = []
                 to_check = [
-                    ('bettercap/bettercap', parse_version('bettercap -version'), True, 'bettercap'),
-                    ('evilsocket/pwngrid', parse_version('pwngrid -version'), True, 'pwngrid-peer'),
-                    ('crs-k/pwnagotchi', pwnagotchi.__version__, False, 'pwnagotchi')
+                    # removing bettercap and pwngrid from auto-update as compiling new versions uses a newer libc6,
+                    # which is not compatible with bullseye RaspiOS.
+                    # ('jayofelony/bettercap', parse_version('bettercap -version'), True, 'bettercap'),
+                    # ('jayofelony/pwngrid', parse_version('pwngrid -version'), True, 'pwngrid-peer'),
+                    ('jayofelony/pwnagotchi-torch', pwnagotchi.__version__, False, 'pwnagotchi')
                 ]
 
                 for repo, local_version, is_native, svc_name in to_check:
                     info = check(local_version, repo, is_native)
                     if info['url'] is not None:
+
                         logging.warning(
                             "update for %s available (local version is '%s'): %s" % (
                                 repo, info['current'], info['url']))
@@ -215,7 +231,8 @@ class AutoUpdate(plugins.Plugin):
 
                 if num_installed > 0:
                     display.update(force=True, new_data={'status': 'Rebooting ...'})
-                    pwnagotchi.reboot()
+                    time.sleep(3)
+                    os.system("service pwnagotchi restart")
 
             except Exception as e:
                 logging.error("[update] %s" % e)

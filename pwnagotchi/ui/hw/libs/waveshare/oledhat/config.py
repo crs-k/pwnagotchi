@@ -32,7 +32,6 @@ import time
 from smbus import SMBus
 import spidev
 
-import ctypes
 # import spidev
 
 # Pin definition

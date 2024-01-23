@@ -120,6 +120,7 @@ setTimeout(checkPwnagotchi, 1000);
 
 HTML_FORM = None
 
+
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
