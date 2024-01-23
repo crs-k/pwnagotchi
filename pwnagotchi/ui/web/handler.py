@@ -6,7 +6,6 @@ import secrets
 import json
 from functools import wraps
 
-import flask
 
 # https://stackoverflow.com/questions/14888799/disable-console-messages-in-flask-server
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
@@ -23,7 +22,7 @@ from flask import request
 from flask import jsonify
 from flask import abort
 from flask import redirect
-from flask import render_template, render_template_string
+from flask import render_template
 
 
 class Handler:

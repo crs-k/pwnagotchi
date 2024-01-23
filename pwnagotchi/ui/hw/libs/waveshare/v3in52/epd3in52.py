@@ -28,7 +28,6 @@
 #
 
 import logging
-from multiprocessing.reduction import recv_handle
 from .. import epdconfig
 
 # Display resolution
@@ -253,56 +252,56 @@ class EPD:
 
     # LUT download
     def lut_GC(self):
-        self.send_command(0x20);  # vcom
+        self.send_command(0x20)  # vcom
         self.send_data2(self.lut_R20_GC[:56])
 
-        self.send_command(0x21);  # red not use
+        self.send_command(0x21)  # red not use
         self.send_data2(self.lut_R21_GC[:42])
 
-        self.send_command(0x24);  # bb b
+        self.send_command(0x24)  # bb b
         self.send_data2(self.lut_R24_GC[:42])
 
         if (self.Flag == 0):
-            self.send_command(0x22);  # bw r
+            self.send_command(0x22)  # bw r
             self.send_data2(self.lut_R22_GC[:56])
 
-            self.send_command(0x23);  # wb w
+            self.send_command(0x23)  # wb w
             self.send_data2(self.lut_R23_GC[:42])
             self.Flag = 1
 
         else:
-            self.send_command(0x22);  # bw r
+            self.send_command(0x22)  # bw r
             self.send_data2(self.lut_R23_GC[:56])
 
-            self.send_command(0x23);  # wb w
+            self.send_command(0x23)  # wb w
             self.send_data2(self.lut_R22_GC[:42])
             self.Flag = 0
 
     # LUT download
     def lut_DU(self):
-        self.send_command(0x20);  # vcom
+        self.send_command(0x20)  # vcom
         self.send_data2(self.lut_R20_DU[:56])
 
-        self.send_command(0x21);  # red not use
+        self.send_command(0x21)  # red not use
         self.send_data2(self.lut_R21_DU[:42])
 
-        self.send_command(0x24);  # bb b
+        self.send_command(0x24)  # bb b
         self.send_data2(self.lut_R24_DU[:42])
 
         if (self.Flag == 0):
-            self.send_command(0x22);  # bw r
+            self.send_command(0x22)  # bw r
             self.send_data2(self.lut_R22_DU[:56])
 
-            self.send_command(0x23);  # wb w
+            self.send_command(0x23)  # wb w
             self.send_data2(self.lut_R23_DU[:42])
 
             self.Flag = 1
 
         else:
-            self.send_command(0x22);  # bw r
+            self.send_command(0x22)  # bw r
             self.send_data2(self.lut_R23_DU[:56])
 
-            self.send_command(0x23);  # wb w
+            self.send_command(0x23)  # wb w
             self.send_data2(self.lut_R22_DU[:42])
 
             self.Flag = 0
@@ -347,8 +346,8 @@ class EPD:
         self.send_data(0x01)  # x x x x x x x VRES[8]
         self.send_data(0x68)  # VRES[7:0]
 
-        self.send_command(0x50);
-        self.send_data(0xB7);
+        self.send_command(0x50)
+        self.send_data(0xB7)
         return 0
 
     def getbuffer(self, image):
@@ -378,13 +377,13 @@ class EPD:
     def display(self, image):
         if (image == None):
             return
-        self.send_command(0x13);  # Transfer new data
+        self.send_command(0x13)  # Transfer new data
         self.send_data2(image)
 
     def display_NUM(self, NUM):
         # pcnt = 0
 
-        self.send_command(0x13);  # Transfer new data
+        self.send_command(0x13)  # Transfer new data
         for column in range(0, self.height):
             for row in range(0, self.width // 8):
                 if NUM == self.WHITE:
@@ -428,9 +427,9 @@ class EPD:
                     elif (row == 0):
                         self.send_data(0x7F)
                     elif (row == (self.width / 8 - 1)):
-                        self.send_data(0xFE);
+                        self.send_data(0xFE)
                     else:
-                        self.send_data(0xFF);
+                        self.send_data(0xFF)
 
                 elif NUM == self.Crosstalk:
                     if ((row >= (self.width / 8 / 3) and row <= (self.width / 8 / 3 * 2) and column <= (
@@ -446,7 +445,7 @@ class EPD:
                     # self.send_data(gImage_1[pcnt++])
 
     def Clear(self):
-        self.send_command(0x13);  # Transfer new data
+        self.send_command(0x13)  # Transfer new data
         self.send_data2([0xFF] * int(self.width * self.height / 8))
         self.lut_GC()
         self.refresh()

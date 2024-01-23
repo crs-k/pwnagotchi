@@ -30,11 +30,8 @@
 # THE SOFTWARE.
 #
 
-from distutils.command.build_scripts import build_scripts
 import logging
 from .. import epdconfig
-from PIL import Image
-import RPi.GPIO as GPIO
 
 # Display resolution
 EPD_WIDTH = 128

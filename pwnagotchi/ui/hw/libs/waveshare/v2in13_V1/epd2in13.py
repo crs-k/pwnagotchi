@@ -191,10 +191,10 @@ class EPD:
         else:
             linewidth = int(self.width/8) + 1
 
-        self.SetWindows(0, 0, self.width, self.height);
+        self.SetWindows(0, 0, self.width, self.height)
         for j in range(0, self.height):
-            self.SetCursor(0, j);
-            self.send_command(0x24);
+            self.SetCursor(0, j)
+            self.send_command(0x24)
             for i in range(0, linewidth):
                 self.send_data(image[i + j * linewidth])   
         self.TurnOnDisplay()
@@ -205,10 +205,10 @@ class EPD:
         else:
             linewidth = int(self.width/8) + 1
 
-        self.SetWindows(0, 0, self.width, self.height);
+        self.SetWindows(0, 0, self.width, self.height)
         for j in range(0, self.height):
-            self.SetCursor(0, j);
-            self.send_command(0x24);
+            self.SetCursor(0, j)
+            self.send_command(0x24)
             for i in range(0, linewidth):
                 self.send_data(color)   
         self.TurnOnDisplay()

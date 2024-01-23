@@ -1,6 +1,5 @@
 import logging
 import json
-import toml
 import _thread
 import pwnagotchi
 from pwnagotchi import restart, plugins

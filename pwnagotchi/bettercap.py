@@ -7,7 +7,6 @@ import random
 from requests.auth import HTTPBasicAuth
 from time import sleep
 
-import pwnagotchi
 
 requests.adapters.DEFAULT_RETRIES = 5  # increase retries number
 
@@ -110,7 +109,7 @@ class Client(object):
         while True:
             try:
                 r = requests.post("%s/session" % self.url, auth=self.auth, json={'cmd': command})
-            except requests.exceptions.ConnectionError as e:
+            except requests.exceptions.ConnectionError:
                 sleep_time = min_sleep + max_sleep*random.random()
                 logging.warning("[bettercap] can't run my request... connection to the bettercap endpoint failed...")
                 logging.warning('[bettercap] retrying run in {} sec'.format(sleep_time))

@@ -20,11 +20,11 @@ class PawGPS(plugins.Plugin):
 
     def on_loaded(self):
         logging.info("[paw-gps] plugin loaded")
-        if 'ip' not in self.options or ('ip' in self.options and self.options['ip'] is None) or (len('ip' in self.options and self.options['ip']) is 0):
+        if 'ip' not in self.options or ('ip' in self.options and self.options['ip'] is None) or (len('ip' in self.options and self.options['ip']) == 0):
             logging.info("[paw-gps] no IP Address defined in the config file, will uses paw server default (192.168.44.1:8080)")
 
     def on_handshake(self, agent, filename, access_point, client_station):
-        if 'ip' not in self.options or ('ip' in self.options and self.options['ip'] is None or (len('ip' in self.options and self.options['ip']) is 0)):
+        if 'ip' not in self.options or ('ip' in self.options and self.options['ip'] is None or (len('ip' in self.options and self.options['ip']) == 0)):
             ip = "192.168.44.1:8080"
         else:
             ip = self.options['ip']

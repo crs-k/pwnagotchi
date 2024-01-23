@@ -27,7 +27,6 @@
 
 
 import RPi.GPIO as GPIO
-import time
 import numpy as np
 from . import config
 

@@ -8,7 +8,6 @@
 # Backlight: LED
 # Operating voltage: 3.3V
 
-from . import config
 from . import LCD_1in44
 from PIL import ImageOps
 

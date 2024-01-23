@@ -108,7 +108,7 @@ def report_ap(essid, bssid):
             'bssid': bssid,
         })
         return True
-    except Exception as e:
+    except Exception:
         logging.exception("error while reporting ap %s(%s)" % (essid, bssid))
 
     return False

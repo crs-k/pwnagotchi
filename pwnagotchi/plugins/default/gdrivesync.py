@@ -239,7 +239,7 @@ class GdriveSync(plugins.Plugin):
 
             # Upload the file to Google Drive
             zip_file.Upload()
-            logging.info(f"[gDriveSync] Backup uploaded to Google Drive")
+            logging.info("[gDriveSync] Backup uploaded to Google Drive")
         except pydrive2.files.ApiRequestError as api_error:
             self.handle_upload_error(api_error, backup_path, gdrive_folder)
         except Exception as e:

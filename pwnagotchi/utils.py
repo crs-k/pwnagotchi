@@ -388,7 +388,7 @@ def extract_from_pcap(path, fields):
         subtypes = set()
 
         if field == WifiInfo.BSSID:
-            from scapy.layers.dot11 import Dot11Beacon, Dot11ProbeResp, Dot11AssoReq, Dot11ReassoReq, Dot11, sniff
+            from scapy.layers.dot11 import Dot11Beacon, Dot11, sniff
             subtypes.add('beacon')
             bpf_filter = " or ".join([f"wlan type mgt subtype {subtype}" for subtype in subtypes])
             packets = sniff(offline=path, filter=bpf_filter)
@@ -403,7 +403,7 @@ def extract_from_pcap(path, fields):
             except Exception:
                 raise FieldNotFoundError("Could not find field [BSSID]")
         elif field == WifiInfo.ESSID:
-            from scapy.layers.dot11 import Dot11Beacon, Dot11ReassoReq, Dot11AssoReq, Dot11, sniff, Dot11Elt
+            from scapy.layers.dot11 import Dot11Beacon, Dot11, sniff, Dot11Elt
             subtypes.add('beacon')
             subtypes.add('assoc-req')
             subtypes.add('reassoc-req')

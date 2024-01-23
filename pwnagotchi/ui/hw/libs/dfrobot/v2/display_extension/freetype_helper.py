@@ -5,12 +5,10 @@ depends: freetype-py
 '''
 
 import freetype
-import math
 #import sys
 
 #reload(sys)
 #sys.setdefaultencoding("utf-8")
-import importlib,sys
 
 #importlib.reload(sys)
 class Freetype_Helper:

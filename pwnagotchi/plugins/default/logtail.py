@@ -1,13 +1,7 @@
-import os
 import logging
 import threading
-from itertools import islice
-from time import sleep
-from datetime import datetime,timedelta
 from pwnagotchi import plugins
-from pwnagotchi.utils import StatusFile
 from flask import render_template_string
-from flask import jsonify
 from flask import abort
 from flask import Response
 

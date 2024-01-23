@@ -209,7 +209,7 @@ class EPD:
         self.reset()
 
         self.send_command(0x12)  # soft reset
-        self.ReadBusy();
+        self.ReadBusy()
 
         self.send_command(0x74)  # set analog block control
         self.send_data(0x54)

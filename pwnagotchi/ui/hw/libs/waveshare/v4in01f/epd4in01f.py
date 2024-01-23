@@ -144,7 +144,7 @@ class EPD:
                 for x in range(imwidth):
                     # Set the bits for the column of pixels at the current position.
                     Add = int((x + y * self.width) / 2)
-                    Color = 0;
+                    Color = 0
                     if (pixels[x, y][0] == 0 and pixels[x, y][1] == 0 and pixels[x, y][2] == 0):
                         Color = 0
                     elif (pixels[x, y][0] == 255 and pixels[x, y][1] == 255 and pixels[x, y][2] == 255):
@@ -161,7 +161,7 @@ class EPD:
                         Color = 6
 
                     data_t = buf[Add] & (~(0xF0 >> ((x % 2) * 4)))
-                    buf[Add] = data_t | ((Color << 4) >> ((x % 2) * 4));
+                    buf[Add] = data_t | ((Color << 4) >> ((x % 2) * 4))
 
         elif (imwidth == self.height and imheight == self.width):
             for y in range(imheight):
@@ -169,7 +169,7 @@ class EPD:
                     newx = y
                     newy = self.height - x - 1
                     Add = int((newx + newy * self.width) / 2)
-                    Color = 0;
+                    Color = 0
                     if (pixels[x, y][0] == 0 and pixels[x, y][1] == 0 and pixels[x, y][2] == 0):
                         Color = 0
                     elif (pixels[x, y][0] == 255 and pixels[x, y][1] == 255 and pixels[x, y][2] == 255):
@@ -186,7 +186,7 @@ class EPD:
                         Color = 6
 
                     data_t = buf[Add] & (~(0xF0 >> ((newx % 2) * 4)))
-                    buf[Add] = data_t | ((Color << 4) >> ((newx % 2) * 4));
+                    buf[Add] = data_t | ((Color << 4) >> ((newx % 2) * 4))
         return buf
 
     def display(self, image):

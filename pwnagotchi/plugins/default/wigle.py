@@ -116,10 +116,10 @@ class Wigle(plugins.Plugin):
             logging.debug("WIGLE: api_key isn't set. Can't upload to wigle.net")
             return
 
-        if not 'whitelist' in self.options:
+        if 'whitelist' not in self.options:
             self.options['whitelist'] = list()
 
-        if not 'donate' in self.options:
+        if 'donate' not in self.options:
             self.options['donate'] = True
 
         self.ready = True

@@ -81,9 +81,9 @@ class EPD:
         logger.debug("e-Paper busy release")
 
     def TurnOnDisplay(self):
-        self.send_command(0x12);  # POWER ON
+        self.send_command(0x12)  # POWER ON
         epdconfig.delay_ms(100)
-        self.ReadBusy();
+        self.ReadBusy()
 
     def init(self):
         if (epdconfig.module_init() != 0):

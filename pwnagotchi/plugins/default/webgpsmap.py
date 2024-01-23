@@ -5,7 +5,6 @@ import logging
 import os
 import json
 import re
-import datetime
 from flask import Response
 from functools import lru_cache
 from dateutil.parser import parse
@@ -108,7 +107,7 @@ class Webgpsmap(plugins.Plugin):
                         response_status = 200
                         response_mimetype = "application/xhtml+xml"
                         response_header_contenttype = 'text/html'
-                        response_header_contentdisposition = 'attachment; filename=webgpsmap.html';
+                        response_header_contentdisposition = 'attachment; filename=webgpsmap.html'
                     except Exception as error:
                         logging.error(f"[webgpsmap] on_webhook offlinemap: error: {error}")
                         return

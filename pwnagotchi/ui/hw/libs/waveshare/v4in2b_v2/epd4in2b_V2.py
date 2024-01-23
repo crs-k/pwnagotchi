@@ -88,11 +88,11 @@ class EPD:
 
         self.reset()
 
-        self.send_command(0x04);
-        self.ReadBusy();
+        self.send_command(0x04)
+        self.ReadBusy()
 
-        self.send_command(0x00);
-        self.send_data(0x0f);
+        self.send_command(0x00)
+        self.send_data(0x0f)
 
         return 0
 

@@ -32,7 +32,6 @@ from pwnagotchi.ui.hw.waveshare2in9b_V3 import Waveshare29bV3
 from pwnagotchi.ui.hw.waveshare2in9b_V4 import Waveshare29bV4
 # from pwnagotchi.ui.hw.waveshare2in9bc import Waveshare29bc
 # from pwnagotchi.ui.hw.waveshare2in9d import Waveshare29d
-from pwnagotchi.ui.hw.waveshare2in13b_V3 import Waveshare213bV3
 # from pwnagotchi.ui.hw.waveshare2in23g import Waveshare223g
 # from pwnagotchi.ui.hw.waveshare2in36g import Waveshare236g
 # from pwnagotchi.ui.hw.waveshare2in66 import Waveshare266

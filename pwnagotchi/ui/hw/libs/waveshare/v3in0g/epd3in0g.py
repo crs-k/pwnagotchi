@@ -31,9 +31,7 @@
 import logging
 from .. import epdconfig
 
-import PIL
 from PIL import Image
-import io
 
 # Display resolution
 EPD_WIDTH = 168

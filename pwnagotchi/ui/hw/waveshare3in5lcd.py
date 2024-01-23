@@ -3,7 +3,7 @@ import logging
 import pwnagotchi.ui.fonts as fonts
 from pwnagotchi.ui.hw.base import DisplayImpl
 
-import os, time
+import time
 
 
 class Waveshare35lcd(DisplayImpl):
