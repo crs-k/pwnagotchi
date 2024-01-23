@@ -39,5 +39,5 @@ jobs:
       continue-on-error: true
     - name: Unit Test
       run: |
-        python -m unittest
+        python -m unittest discover -p "test_*.py" -v
               
