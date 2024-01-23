@@ -1,8 +1,6 @@
-PACKER_VERSION := 1.8.3
+PACKER_VERSION := 1.10.0
 PWN_HOSTNAME := pwnagotchi
-# PWN_VERSION := $(shell cut -d"'" -f2 < pwnagotchi/_version.py)
-PWN_VERSION := $(or ${PWN_VERSION},$(shell cut -d"'" -f2 < pwnagotchi/_version.py))
-PWN_RELEASE := pwnagotchi-raspios-lite-$(PWN_VERSION)
+PWN_VERSION := $(shell cut -d"'" -f2 < pwnagotchi/_version.py)
 
 MACHINE_TYPE := $(shell uname -m)
 ifneq (,$(filter x86_64,$(MACHINE_TYPE)))
@@ -27,15 +25,21 @@ ifneq (,$(UNSHARE))
 UNSHARE := $(UNSHARE) --uts
 endif
 
-all: clean install image
+all: clean image clean
 
-langs:
+update_langs:
+	@for lang in pwnagotchi/locale/*/; do\
+		echo "updating language: $$lang ..."; \
+		./scripts/language.sh update $$(basename $$lang); \
+	done
+
+compile_langs:
 	@for lang in pwnagotchi/locale/*/; do\
 		echo "compiling language: $$lang ..."; \
 		./scripts/language.sh compile $$(basename $$lang); \
 	done
 
-PACKER := /tmp/pwnagotchi/packer
+PACKER := ~/pwnagotchi/packer
 PACKER_URL := https://releases.hashicorp.com/packer/$(PACKER_VERSION)/packer_$(PACKER_VERSION)_linux_$(GOARCH).zip
 $(PACKER):
 	mkdir -p $(@D)
@@ -49,31 +53,16 @@ $(SDIST): setup.py pwnagotchi
 	python3 setup.py sdist
 
 # Building the image requires packer, but don't rebuild the image just because packer updated.
-$(PWN_RELEASE).img: | $(PACKER)
+pwnagotchi: | $(PACKER)
 
 # If the packer or ansible files are updated, rebuild the image.
-$(PWN_RELEASE).img: $(SDIST) builder/pwnagotchi.json builder/pwnagotchi.yml $(shell find builder/data -type f)
-	sudo $(PACKER) plugins install github.com/solo-io/arm-image
-	cd builder && sudo $(UNSHARE) $(PACKER) build -var "pwn_hostname=$(PWN_HOSTNAME)" -var "pwn_version=$(PWN_VERSION)" pwnagotchi.json
-	sudo chown -R $$USER:$$USER builder/output-pwnagotchi
-	mv builder/output-pwnagotchi/image $@
+pwnagotchi: $(SDIST) builder/pwnagotchi.json.pkr.hcl builder/raspberrypi32.yml builder/raspberrypi64.yml builder/orangepi.yml builder/extras/nexmon.yml $(shell find builder/data -type f)
 
-# If any of these files are updated, rebuild the checksums.
-$(PWN_RELEASE).sha256: $(PWN_RELEASE).img
-	sha256sum $^ > $@
-
-# If any of the input files are updated, rebuild the archive.
-$(PWN_RELEASE).zip: $(PWN_RELEASE).img $(PWN_RELEASE).sha256
-	zip $(PWN_RELEASE).zip $^
+	cd builder && $(PACKER) init pwnagotchi.json.pkr.hcl && sudo $(UNSHARE) $(PACKER) build -var "pwn_hostname=$(PWN_HOSTNAME)" -var "pwn_version=$(PWN_VERSION)" pwnagotchi.json.pkr.hcl
 
 .PHONY: image
-image: $(PWN_RELEASE).zip
+image: pwnagotchi
 
 clean:
-	- python3 setup.py clean --all
 	- rm -rf dist pwnagotchi.egg-info
 	- rm -f $(PACKER)
-	- rm -f $(PWN_RELEASE).*
-	- sudo rm -rf builder/output-pwnagotchi builder/packer_cache
-
-

@@ -1,8 +1,11 @@
+import sys
+
 import pwnagotchi.plugins as plugins
 import logging
 import os
 import json
 import re
+import datetime
 from flask import Response
 from functools import lru_cache
 from dateutil.parser import parse
@@ -20,6 +23,7 @@ from dateutil.parser import parse
         you can save the html-map as one file for offline use or host on your own webspace with "/plugins/webgpsmap/offlinemap"
 
 '''
+
 
 class Webgpsmap(plugins.Plugin):
     __author__ = 'https://github.com/xenDE and https://github.com/dadav'
@@ -84,7 +88,8 @@ class Webgpsmap(plugins.Plugin):
                     # returns all positions
                     try:
                         self.ALREADY_SENT = list()
-                        response_data = bytes(json.dumps(self.load_gps_from_dir(self.config['bettercap']['handshakes'])), "utf-8")
+                        response_data = bytes(
+                            json.dumps(self.load_gps_from_dir(self.config['bettercap']['handshakes'])), "utf-8")
                         response_status = 200
                         response_mimetype = "application/json"
                         response_header_contenttype = 'application/json'
@@ -97,17 +102,18 @@ class Webgpsmap(plugins.Plugin):
                         self.ALREADY_SENT = list()
                         json_data = json.dumps(self.load_gps_from_dir(self.config['bettercap']['handshakes']))
                         html_data = self.get_html()
-                        html_data = html_data.replace('var positions = [];', 'var positions = ' + json_data + ';positionsLoaded=true;drawPositions();')
+                        html_data = html_data.replace('var positions = [];',
+                                                      'var positions = ' + json_data + ';positionsLoaded=true;drawPositions();')
                         response_data = bytes(html_data, "utf-8")
                         response_status = 200
                         response_mimetype = "application/xhtml+xml"
                         response_header_contenttype = 'text/html'
-                        response_header_contentdisposition = 'attachment; filename=webgpsmap.html'
+                        response_header_contentdisposition = 'attachment; filename=webgpsmap.html';
                     except Exception as error:
                         logging.error(f"[webgpsmap] on_webhook offlinemap: error: {error}")
                         return
                 # elif path.startswith('/newest'):
-                #     # returns all positions newer then timestamp
+                #     # returns all positions newer than timestamp
                 #     response_data = bytes(json.dumps(self.load_gps_from_dir(self.config['bettercap']['handshakes']), newest_only=True), "utf-8")
                 #     response_status = 200
                 #     response_mimetype = "application/json"
@@ -148,7 +154,6 @@ class Webgpsmap(plugins.Plugin):
     def _get_pos_from_file(self, path):
         return PositionFile(path)
 
-
     def load_gps_from_dir(self, gpsdir, newest_only=False):
         """
         Parses the gps-data from disk
@@ -159,13 +164,12 @@ class Webgpsmap(plugins.Plugin):
 
         logging.info(f"[webgpsmap] scanning {handshake_dir}")
 
-
         all_files = os.listdir(handshake_dir)
-        #print(all_files)
+        # print(all_files)
         all_pcap_files = [os.path.join(handshake_dir, filename)
-                                for filename in all_files
-                                if filename.endswith('.pcap')
-                                ]
+                          for filename in all_files
+                          if filename.endswith('.pcap')
+                          ]
         all_geo_or_gps_files = []
         for filename_pcap in all_pcap_files:
             filename_base = filename_pcap[:-5]  # remove ".pcap"
@@ -192,12 +196,13 @@ class Webgpsmap(plugins.Plugin):
             if filename_position is not None:
                 all_geo_or_gps_files.append(filename_position)
 
-    #    all_geo_or_gps_files = set(all_geo_or_gps_files) - set(SKIP)   # remove skipped networks? No!
+        #    all_geo_or_gps_files = set(all_geo_or_gps_files) - set(SKIP)   # remove skipped networks? No!
 
         if newest_only:
             all_geo_or_gps_files = set(all_geo_or_gps_files) - set(self.ALREADY_SENT)
 
-        logging.info(f"[webgpsmap] Found {len(all_geo_or_gps_files)} position-data files from {len(all_pcap_files)} handshakes. Fetching positions ...")
+        logging.info(
+            f"[webgpsmap] Found {len(all_geo_or_gps_files)} position-data files from {len(all_pcap_files)} handshakes. Fetching positions ...")
 
         for pos_file in all_geo_or_gps_files:
             try:
@@ -217,7 +222,7 @@ class Webgpsmap(plugins.Plugin):
                     pos_type = 'geo'
                 elif pos.type() == PositionFile.PAWGPS:
                     pos_type = 'paw'
-                gps_data[ssid+"_"+mac] = {
+                gps_data[ssid + "_" + mac] = {
                     'ssid': ssid,
                     'mac': mac,
                     'type': pos_type,
@@ -226,7 +231,7 @@ class Webgpsmap(plugins.Plugin):
                     'acc': pos.accuracy(),
                     'ts_first': pos.timestamp_first(),
                     'ts_last': pos.timestamp_last(),
-                    }
+                }
 
                 # get ap password if exist
                 check_for = os.path.basename(pos_file).split(".")[0] + ".pcap.cracked"
@@ -299,7 +304,6 @@ class PositionFile:
             return parsed_ssid.groups()[0]
         return None
 
-
     def json(self):
         """
         returns the parsed json
@@ -345,7 +349,8 @@ class PositionFile:
             except OSError as error:
                 logging.error(f"[webgpsmap] OS error loading password: {password_file_path} - error: {format(error)}")
             except:
-                logging.error(f"[webgpsmap] Unexpected error loading password: {password_file_path} - error: {sys.exc_info()[0]}")
+                logging.error(
+                    f"[webgpsmap] Unexpected error loading password: {password_file_path} - error: {sys.exc_info()[0]}")
                 raise
         return return_pass
 
@@ -405,9 +410,9 @@ class PositionFile:
 
     def accuracy(self):
         if self.type() == PositionFile.GPS:
-            return 50.0 # a default
+            return 50.0  # a default
         if self.type() == PositionFile.PAWGPS:
-            return 50.0 # a default
+            return 50.0  # a default
         if self.type() == PositionFile.GEO:
             try:
                 return self._json['accuracy']

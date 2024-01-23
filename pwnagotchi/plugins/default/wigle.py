@@ -109,16 +109,17 @@ class Wigle(plugins.Plugin):
         self.report = StatusFile('/root/.wigle_uploads', data_format='json')
         self.skip = list()
         self.lock = Lock()
+        self.options = dict()
 
     def on_loaded(self):
         if 'api_key' not in self.options or ('api_key' in self.options and self.options['api_key'] is None):
             logging.debug("WIGLE: api_key isn't set. Can't upload to wigle.net")
             return
 
-        if 'whitelist' not in self.options:
+        if not 'whitelist' in self.options:
             self.options['whitelist'] = list()
 
-        if 'donate' not in self.options:
+        if not 'donate' in self.options:
             self.options['donate'] = True
 
         self.ready = True

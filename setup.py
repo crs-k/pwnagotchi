@@ -11,10 +11,11 @@ import warnings
 
 log = logging.getLogger(__name__)
 
+
 def install_file(source_filename, dest_filename):
     # do not overwrite network configuration if it exists already
     # https://github.com/evilsocket/pwnagotchi/issues/483
-    if dest_filename.startswith('/etc/network/interfaces.d/') and os.path.exists(dest_filename):
+    if dest_filename.startswith('/etc/network/interfaces.d/') and dest_filename.startswith('/root/') and os.path.exists(dest_filename):
         log.info(f"{dest_filename} exists, skipping ...")
         return
 
@@ -23,7 +24,7 @@ def install_file(source_filename, dest_filename):
     if not os.path.isdir(dest_folder):
         os.makedirs(dest_folder)
 
-    shutil.copyfile(source_filename, dest_filename)
+    shutil.copy2(source_filename, dest_filename)
     if dest_filename.startswith("/usr/bin/"):
         os.chmod(dest_filename, 0o755)
 
@@ -59,25 +60,15 @@ class CustomInstall(install):
 
 
 def version(version_file):
-    #with open(version_file, 'rt') as vf:
-        #version_file_content = vf.read()
+    with open(version_file, 'rt') as vf:
+        version_file_content = vf.read()
 
-    #version_match = re.search(r"__version__\s*=\s*[\"\']([^\"\']+)", version_file_content)
-    #if version_match:
-        #return version_match.groups()[0]
-
-    if "PWN_VERSION" in os.environ:
-       return os.environ["PWN_VERSION"]
-    else:
-       with open(version_file, 'rt') as vf:
-          version_file_content = vf.read()
-
-       version_match = re.search(r"__version__\s*=\s*[\"\']([^\"\']+)", version_file_content)
-
-       if version_match:
-          return version_match.groups()[0]
+    version_match = re.search(r"__version__\s*=\s*[\"\']([^\"\']+)", version_file_content)
+    if version_match:
+        return version_match.groups()[0]
 
     return None
+
 
 with open('requirements.txt') as fp:
     required = [

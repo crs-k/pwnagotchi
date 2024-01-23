@@ -6,6 +6,8 @@ import secrets
 import json
 from functools import wraps
 
+import flask
+
 # https://stackoverflow.com/questions/14888799/disable-console-messages-in-flask-server
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
 os.environ['WERKZEUG_RUN_MAIN'] = 'true'
@@ -21,7 +23,7 @@ from flask import request
 from flask import jsonify
 from flask import abort
 from flask import redirect
-from flask import render_template
+from flask import render_template, render_template_string
 
 
 class Handler:
@@ -185,6 +187,11 @@ class Handler:
         if name == 'toggle' and request.method == 'POST':
             checked = True if 'enabled' in request.form else False
             return 'success' if plugins.toggle_plugin(request.form['plugin'], checked) else 'failed'
+
+        if name == 'upgrade' and request.method == 'POST':
+            logging.info(f"Upgrading plugin: {request.form['plugin']}")
+            os.system(f"pwnagotchi plugins update && pwnagotchi plugins upgrade {request.form['plugin']}")
+            return redirect("/plugins")
 
         if name in plugins.loaded and plugins.loaded[name] is not None and hasattr(plugins.loaded[name], 'on_webhook'):
             try:

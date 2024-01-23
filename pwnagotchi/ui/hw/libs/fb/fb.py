@@ -120,7 +120,7 @@ def numpy_888_565(bt):
   return (((0xF80000 & arr)>>8)|((0xFC00 & arr)>>5)|((0xF8 & arr)>>3)).astype(np.uint16).tostring()
 
 def show_img(img):
-  if type(img) is not bytes:
+  if not type(img) is bytes:
     if not RGB:
       if bpp == 24: # for RPI
         img = img.tobytes('raw', 'BGR')

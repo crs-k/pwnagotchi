@@ -1,4 +1,4 @@
-# Based on UPS Lite v1.1 from https://github.com/xenDE
+# Based on UPS Lite v213inV1.1 from https://github.com/xenDE
 #
 # functions for get UPS status - needs enable "i2c" in raspi-config
 #
@@ -11,7 +11,6 @@
 # To display external power supply status you need to bridge the necessary pins on the UPS-Lite board. See instructions in the UPS-Lite repo.
 import logging
 import struct
-import subprocess
 
 import RPi.GPIO as GPIO
 
@@ -29,16 +28,11 @@ class UPS:
         import smbus
         # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1)
         self._bus = smbus.SMBus(1)
-        # Version v1.1 and v1.2
-        self.address = 0x36
-        if subprocess.run(['i2cget', '-y', '1', '0x62']).returncode == 0:
-            # Version v1.3
-            self.address = 0X62
-            self._bus.write_word_data(self.address, 0X0A, 0x30)
 
     def voltage(self):
         try:
-            read = self._bus.read_word_data(self.address, 2)
+            address = 0x36
+            read = self._bus.read_word_data(address, 2)
             swapped = struct.unpack("<H", struct.pack(">H", read))[0]
             return swapped * 1.25 / 1000 / 16
         except:
@@ -46,7 +40,8 @@ class UPS:
 
     def capacity(self):
         try:
-            read = self._bus.read_word_data(self.address, 4)
+            address = 0x36
+            read = self._bus.read_word_data(address, 4)
             swapped = struct.unpack("<H", struct.pack(">H", read))[0]
             return swapped / 256
         except:
@@ -65,10 +60,11 @@ class UPSLite(plugins.Plugin):
     __author__ = 'evilsocket@gmail.com'
     __version__ = '1.0.0'
     __license__ = 'GPL3'
-    __description__ = 'A plugin that will add a voltage indicator for the UPS Lite v1.1, v1.2, v1.3'
+    __description__ = 'A plugin that will add a voltage indicator for the UPS Lite V1.1'
 
     def __init__(self):
         self.ups = None
+        self.options = dict()
 
     def on_loaded(self):
         self.ups = UPS()

@@ -9,7 +9,8 @@ from pwnagotchi.ai.parameter import Parameter
 
 
 class Environment(gym.Env):
-    metadata = {'render.modes': ['human']}
+    render_mode = "human"
+    metadata = {'render_modes': ['human']}
     params = [
         Parameter('min_rssi', min_value=-200, max_value=-50),
         Parameter('ap_ttl', min_value=30, max_value=600),
@@ -34,14 +35,11 @@ class Environment(gym.Env):
         self._epoch_num = 0
         self._last_render = None
 
-        # see https://github.com/evilsocket/pwnagotchi/issues/583
-        self._supported_channels = agent.supported_channels()
-        self._extended_spectrum = any(ch > 140 for ch in self._supported_channels)
-        self._histogram_size, self._observation_shape = featurizer.describe(self._extended_spectrum)
+        channels = agent.supported_channels()
 
         Environment.params += [
             Parameter('_channel_%d' % ch, min_value=0, max_value=1, meta=ch + 1) for ch in
-            range(self._histogram_size) if ch + 1 in self._supported_channels
+            range(featurizer.histogram_size) if ch + 1 in channels
         ]
 
         self.last = {
@@ -54,7 +52,7 @@ class Environment(gym.Env):
         }
 
         self.action_space = spaces.MultiDiscrete([p.space_size() for p in Environment.params if p.trainable])
-        self.observation_space = spaces.Box(low=0, high=1, shape=self._observation_shape, dtype=np.float32)
+        self.observation_space = spaces.Box(low=0, high=1, shape=featurizer.shape, dtype=np.float32)
         self.reward_range = reward.range
 
     @staticmethod
@@ -98,7 +96,7 @@ class Environment(gym.Env):
 
     def step(self, policy):
         # create the parameters from the policy and update
-        # update them in the algorithm
+        # them in the algorithm
         self._apply_policy(policy)
         self._epoch_num += 1
 
@@ -122,7 +120,7 @@ class Environment(gym.Env):
         return self.last['state_v']
 
     def _render_histogram(self, hist):
-        for ch in range(self._histogram_size):
+        for ch in range(featurizer.histogram_size):
             if hist[ch]:
                 logging.info("      CH %d: %s" % (ch + 1, hist[ch]))
 
@@ -137,12 +135,13 @@ class Environment(gym.Env):
 
         self._last_render = self._epoch_num
 
-        logging.info("[ai] --- training epoch %d/%d ---" % (self._epoch_num, self._agent.training_epochs()))
-        logging.info("[ai] REWARD: %f" % self.last['reward'])
+        logging.info("[AI] --- training epoch %d/%d ---" % (self._epoch_num, self._agent.training_epochs()))
+        logging.info("[AI] REWARD: %f" % self.last['reward'])
 
-        logging.debug("[ai] policy: %s" % ', '.join("%s:%s" % (name, value) for name, value in self.last['params'].items()))
+        logging.debug(
+            "[AI] policy: %s" % ', '.join("%s:%s" % (name, value) for name, value in self.last['params'].items()))
 
-        logging.info("[ai] observation:")
+        logging.info("[AI] observation:")
         for name, value in self.last['state'].items():
             if 'histogram' in name:
                 logging.info("    %s" % name.replace('_histogram', ''))

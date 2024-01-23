@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 
+import sys
 
 from .dfrobot_printString import PrintString
 from .dfrobot_fonts import Fonts

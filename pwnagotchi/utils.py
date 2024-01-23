@@ -1,4 +1,3 @@
-
 import logging
 import glob
 import os
@@ -58,9 +57,8 @@ class DottedTomlEncoder(TomlEncoder):
                     if not retstr.endswith('\n\n'):
                         retstr += '\n'
                 else:
-                    retstr += (pre + qsection + " = " +
-                                str(self.dump_value(value)) + '\n')
-        return (retstr, self._dict())
+                    retstr += (pre + qsection + " = " + str(self.dump_value(value)) + '\n')
+        return retstr, self._dict()
 
 
 def parse_version(version):
@@ -75,6 +73,7 @@ def remove_whitelisted(list_of_handshakes, list_of_whitelisted_strings, valid_on
     Removes a given list of whitelisted handshakes from a path list
     """
     filtered = list()
+
     def normalize(name):
         """
         Only allow alpha/nums
@@ -96,7 +95,6 @@ def remove_whitelisted(list_of_handshakes, list_of_whitelisted_strings, valid_on
     return filtered
 
 
-
 def download_file(url, destination, chunk_size=128):
     import requests
     resp = requests.get(url)
@@ -105,6 +103,7 @@ def download_file(url, destination, chunk_size=128):
     with open(destination, 'wb') as fd:
         for chunk in resp.iter_content(chunk_size):
             fd.write(chunk)
+
 
 def unzip(file, destination, strip_dirs=0):
     os.makedirs(destination, exist_ok=True)
@@ -129,11 +128,12 @@ def merge_config(user, default):
                 user[k] = merge_config(user[k], v)
     return user
 
+
 def keys_to_str(data):
-    if isinstance(data,list):
+    if isinstance(data, list):
         converted_list = list()
         for item in data:
-            if isinstance(item,list) or isinstance(item,dict):
+            if isinstance(item, list) or isinstance(item, dict):
                 converted_list.append(keys_to_str(item))
             else:
                 converted_list.append(item)
@@ -148,10 +148,12 @@ def keys_to_str(data):
 
     return converted_dict
 
+
 def save_config(config, target):
     with open(target, 'wt') as fp:
         fp.write(toml.dumps(config, encoder=DottedTomlEncoder()))
     return True
+
 
 def load_config(args):
     default_config_path = os.path.dirname(args.config)
@@ -163,19 +165,22 @@ def load_config(args):
     ref_defaults_data = None
 
     # check for a config.yml file on /boot/
-    for boot_conf in ['/boot/config.yml', '/boot/config.toml']:
+    for boot_conf in ['/boot/config.yml', '/boot/firmware/config.yml', '/boot/config.toml', '/boot/firmware/config.toml']:
         if os.path.exists(boot_conf):
+            if os.path.exists(args.user_config):
+                # if /etc/pwnagotchi/config.toml already exists we just merge the new config
+                merge_config(boot_conf, args.user_config)
             # logging not configured here yet
-            print("installing %s to %s ...", boot_conf, args.user_config)
+            print("installing new %s to %s ...", boot_conf, args.user_config)
             # https://stackoverflow.com/questions/42392600/oserror-errno-18-invalid-cross-device-link
             shutil.move(boot_conf, args.user_config)
             break
 
     # check for an entire pwnagotchi folder on /boot/
-    if os.path.isdir('/boot/pwnagotchi'):
-        print("installing /boot/pwnagotchi to /etc/pwnagotchi ...")
+    if os.path.isdir('/boot/firmware/pwnagotchi'):
+        print("installing /boot/firmware/pwnagotchi to /etc/pwnagotchi ...")
         shutil.rmtree('/etc/pwnagotchi', ignore_errors=True)
-        shutil.move('/boot/pwnagotchi', '/etc/')
+        shutil.move('/boot/firmware/pwnagotchi', '/etc/')
 
     # if not config is found, copy the defaults
     if not os.path.exists(args.config):
@@ -220,26 +225,26 @@ def load_config(args):
         if user_config:
             config = merge_config(user_config, config)
     except Exception as ex:
-        logging.error("There was an error processing the configuration file:\n%s ",ex)
+        logging.error("There was an error processing the configuration file:\n%s ", ex)
         sys.exit(1)
 
     # dropins
     dropin = config['main']['confd']
     if dropin and os.path.isdir(dropin):
-        dropin += '*.toml' if dropin.endswith('/') else '/*.toml' # only toml here; yaml is no more
+        dropin += '*.toml' if dropin.endswith('/') else '/*.toml'  # only toml here; yaml is no more
         for conf in glob.glob(dropin):
             with open(conf) as toml_file:
                 additional_config = toml.load(toml_file)
                 config = merge_config(additional_config, config)
 
-    # the very first step is to normalize the display name so we don't need dozens of if/elif around
+    # the very first step is to normalize the display name, so we don't need dozens of if/elif around
     if config['ui']['display']['type'] in ('inky', 'inkyphat'):
         config['ui']['display']['type'] = 'inky'
 
     elif config['ui']['display']['type'] in ('papirus', 'papi'):
         config['ui']['display']['type'] = 'papirus'
 
-    elif config['ui']['display']['type'] in ('oledhat',):
+    elif config['ui']['display']['type'] in 'oledhat':
         config['ui']['display']['type'] = 'oledhat'
 
     elif config['ui']['display']['type'] in ('ws_1', 'ws1', 'waveshare_1', 'waveshare1'):
@@ -263,7 +268,7 @@ def load_config(args):
     elif config['ui']['display']['type'] in ('ws_29inch', 'ws29inch', 'waveshare_29inch', 'waveshare29inch'):
         config['ui']['display']['type'] = 'waveshare29inch'
 
-    elif config['ui']['display']['type'] in ('lcdhat',):
+    elif config['ui']['display']['type'] in 'lcdhat':
         config['ui']['display']['type'] = 'lcdhat'
 
     elif config['ui']['display']['type'] in ('dfrobot_1', 'df1'):
@@ -275,7 +280,8 @@ def load_config(args):
     elif config['ui']['display']['type'] in ('ws_154inch', 'ws154inch', 'waveshare_154inch', 'waveshare154inch'):
         config['ui']['display']['type'] = 'waveshare154inch'
 
-    elif config['ui']['display']['type'] in ('waveshare144lcd', 'ws_144inch', 'ws144inch', 'waveshare_144inch', 'waveshare144inch'):
+    elif config['ui']['display']['type'] in (
+            'waveshare144lcd', 'ws_144inch', 'ws144inch', 'waveshare_144inch', 'waveshare144inch'):
         config['ui']['display']['type'] = 'waveshare144lcd'
 
     elif config['ui']['display']['type'] in ('ws_213d', 'ws213d', 'waveshare_213d', 'waveshare213d'):
@@ -287,14 +293,14 @@ def load_config(args):
     elif config['ui']['display']['type'] in ('ws_213bv4', 'ws213bv4', 'waveshare_213bv4', 'waveshare213inb_v4'):
         config['ui']['display']['type'] = 'waveshare213inb_v4'
 
-    elif config['ui']['display']['type'] in ('waveshare35lcd'):
-        config['ui']['display']['type'] = 'waveshare35lcd'
-
-    elif config['ui']['display']['type'] in ('spotpear24inch'):
+    elif config['ui']['display']['type'] in 'spotpear24inch':
         config['ui']['display']['type'] = 'spotpear24inch'
 
-    elif config['ui']['display']['type'] in ('displayhatmini'):
+    elif config['ui']['display']['type'] in 'displayhatmini':
         config['ui']['display']['type'] = 'displayhatmini'
+
+    elif config['ui']['display']['type'] in 'waveshare35lcd':
+        config['ui']['display']['type'] = 'waveshare35lcd'
 
     else:
         print("unsupported display type %s" % config['ui']['display']['type'])
@@ -316,11 +322,11 @@ def total_unique_handshakes(path):
 
 def iface_channels(ifname):
     channels = []
-    output = subprocess.getoutput("/sbin/iwlist %s freq" % ifname)
+    phy = subprocess.getoutput("/sbin/iw %s info | grep wiphy | cut -d ' ' -f 2" % ifname)
+    output = subprocess.getoutput("/sbin/iw phy%s channels | grep ' MHz' | grep -v disabled | sed 's/^.*\[//g' | sed s/\].*\$//g" % phy)
     for line in output.split("\n"):
         line = line.strip()
-        if line.startswith("Channel "):
-            channels.append(int(line.split()[1]))
+        channels.append(int(line))
     return channels
 
 
@@ -382,7 +388,7 @@ def extract_from_pcap(path, fields):
         subtypes = set()
 
         if field == WifiInfo.BSSID:
-            from scapy.all import Dot11Beacon, Dot11, sniff
+            from scapy.layers.dot11 import Dot11Beacon, Dot11ProbeResp, Dot11AssoReq, Dot11ReassoReq, Dot11, sniff
             subtypes.add('beacon')
             bpf_filter = " or ".join([f"wlan type mgt subtype {subtype}" for subtype in subtypes])
             packets = sniff(offline=path, filter=bpf_filter)
@@ -397,7 +403,7 @@ def extract_from_pcap(path, fields):
             except Exception:
                 raise FieldNotFoundError("Could not find field [BSSID]")
         elif field == WifiInfo.ESSID:
-            from scapy.all import Dot11Beacon, Dot11, sniff, Dot11Elt
+            from scapy.layers.dot11 import Dot11Beacon, Dot11ReassoReq, Dot11AssoReq, Dot11, sniff, Dot11Elt
             subtypes.add('beacon')
             subtypes.add('assoc-req')
             subtypes.add('reassoc-req')
@@ -413,7 +419,7 @@ def extract_from_pcap(path, fields):
             except Exception:
                 raise FieldNotFoundError("Could not find field [ESSID]")
         elif field == WifiInfo.ENCRYPTION:
-            from scapy.all import Dot11Beacon, sniff
+            from scapy.layers.dot11 import Dot11Beacon, sniff
             subtypes.add('beacon')
             bpf_filter = " or ".join([f"wlan type mgt subtype {subtype}" for subtype in subtypes])
             packets = sniff(offline=path, filter=bpf_filter)
@@ -429,7 +435,7 @@ def extract_from_pcap(path, fields):
             except Exception:
                 raise FieldNotFoundError("Could not find field [ENCRYPTION]")
         elif field == WifiInfo.CHANNEL:
-            from scapy.all import sniff, RadioTap
+            from scapy.layers.dot11 import sniff, RadioTap
             from pwnagotchi.mesh.wifi import freq_to_channel
             packets = sniff(offline=path, count=1)
             try:
@@ -437,7 +443,7 @@ def extract_from_pcap(path, fields):
             except Exception:
                 raise FieldNotFoundError("Could not find field [CHANNEL]")
         elif field == WifiInfo.RSSI:
-            from scapy.all import sniff, RadioTap
+            from scapy.layers.dot11 import sniff, RadioTap
             from pwnagotchi.mesh.wifi import freq_to_channel
             packets = sniff(offline=path, count=1)
             try:
@@ -446,6 +452,7 @@ def extract_from_pcap(path, fields):
                 raise FieldNotFoundError("Could not find field [RSSI]")
 
     return results
+
 
 class StatusFile(object):
     def __init__(self, path, data_format='raw'):
@@ -467,13 +474,13 @@ class StatusFile(object):
             return self.data[name]
         return default
 
-    def newer_then_minutes(self, minutes):
+    def newer_than_minutes(self, minutes):
         return self._updated is not None and ((datetime.now() - self._updated).seconds / 60) < minutes
 
-    def newer_then_hours(self, hours):
+    def newer_than_hours(self, hours):
         return self._updated is not None and ((datetime.now() - self._updated).seconds / (60 * 60)) < hours
 
-    def newer_then_days(self, days):
+    def newer_than_days(self, days):
         return self._updated is not None and (datetime.now() - self._updated).days < days
 
     def update(self, data=None):
