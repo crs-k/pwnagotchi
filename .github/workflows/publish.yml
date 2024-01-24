@@ -65,9 +65,6 @@ jobs:
     - name: Run Makefile
       run: make
 
-    - name: Zip the image
-      run: zip -r pwnagotchi-${{ steps.validate.outputs.tag }}.zip pwnagotchi
-
 
     - name: Get Release URL
       id: get_release_url
@@ -127,23 +124,29 @@ jobs:
       with:
         script: |
           const fs = require('fs');
+          const path = require('path');
           const release_id = "${{ steps.get_release_id.outputs.result }}";
-          const asset_path = `./pwnagotchi-${{ steps.validate.outputs.tag }}.zip`;
-          const asset_name = `pwnagotchi-${{ steps.validate.outputs.tag }}.zip`;
-          const asset_content_type = 'application/zip';
-
-          const asset = fs.readFileSync(asset_path);
-
-          const response = await github.rest.repos.uploadReleaseAsset({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            release_id: release_id,
-            name: asset_name,
-            data: asset,
-            headers: {
-              'content-type': asset_content_type,
-              'content-length': asset.length
-            }
-          });
-
-          return response.data.browser_download_url;
+          const tag = "${{ steps.validate.outputs.tag }}";
+          const asset_content_type = 'application/octet-stream';
+    
+          const files = fs.readdirSync('.').filter(file => file.includes(tag) && path.extname(file) === '.img');
+    
+          for (const file of files) {
+            const asset_path = `./${file}`;
+            const asset_name = file;
+            const asset = fs.readFileSync(asset_path);
+    
+            const response = await github.rest.repos.uploadReleaseAsset({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: release_id,
+              name: asset_name,
+              data: asset,
+              headers: {
+                'content-type': asset_content_type,
+                'content-length': asset.length
+              }
+            });
+    
+            console.log(`Uploaded ${file}: ${response.data.browser_download_url}`);
+          }
