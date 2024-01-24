@@ -1,10 +1,9 @@
 name: Build and Release
 
 on:
-  workflow_dispatch:
-  push:
-    tags:
-      - '*'
+    workflow_dispatch:
+    release:
+      types: [prereleased]
 
 jobs:
   build:
