@@ -34,7 +34,7 @@ jobs:
         PWN_VERSION: ${{ inputs.release_version }}
 
     - name: Install language dependencies
-      run:  sudo apt-get update && sudo apt-get install -y gettext && sudo apt-get install qemu-utils qemu-user-static binfmt-support
+      run:  sudo apt-get update && sudo apt-get install -y gettext && sudo apt-get install qemu-utils qemu-user-static binfmt-support && sudo systemctl enable qemu-user-static && sudo systemctl start qemu-user-static
 
     - name: Update Languages
       run: make update_langs
