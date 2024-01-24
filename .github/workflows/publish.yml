@@ -53,7 +53,10 @@ jobs:
       run: sudo service binfmt-support restart
 
     - name: Mount binfmt_misc
-      run: sudo mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
+      run: |
+        if ! grep -qs '/proc/sys/fs/binfmt_misc ' /proc/mounts; then
+          sudo mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
+        fi
 
     - name: Restart binfmt-support
       run: sudo service binfmt-support restart
