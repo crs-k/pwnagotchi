@@ -95,16 +95,15 @@ jobs:
       uses: actions/github-script@v7
       with:
         script: |
-          const release_id = "${{ steps.get_release.outputs.result.id }}"
-          console.log(`Updating release with id: ${release_id}`)
+          console.log(`Updating release with id: ${{ steps.get_release.outputs.result.id }}`)
           github.rest.repos.updateRelease({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            release_id: release_id,
+            release_id: ${{ steps.get_release.outputs.result.id }},
             tag_name: "${{ steps.validate.outputs.tag }}",
             name: "${{ steps.validate.outputs.tag }}",
             draft: false,
-            prerelease: false
+            prerelease: true
           })
 
     - name: Upload Release Asset
