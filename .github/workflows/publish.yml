@@ -40,7 +40,7 @@ jobs:
         PWN_VERSION: ${{ steps.validate.outputs.tag }}
 
     - name: Install language dependencies
-      run:  sudo apt-get update && sudo apt-get install -y gettext && sudo apt-get install qemu-utils qemu-user-static binfmt-support 
+      run:  sudo apt-get update && sudo apt-get install -y gettext && sudo apt-get install qemu-utils 
     
     - name: Install QEMU
       run: |
@@ -48,7 +48,17 @@ jobs:
         sudo apt-get install -y qemu qemu-user-static binfmt-support
         sudo update-binfmts --enable qemu-arm
         sudo update-binfmts --enable qemu-aarch64
-        
+
+    - name: Restart binfmt-support
+      run: sudo service binfmt-support restart
+
+    - name: Mount binfmt_misc
+      run: sudo mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
+
+    - name: Restart binfmt-support
+      run: sudo service binfmt-support restart
+      
+
     - name: Update Languages
       run: make update_langs
     
