@@ -1,5 +1,5 @@
 name: Build and Release
-
+# ${GITHUB_REF#refs/tags/}
 on:
     workflow_dispatch:
     release:
@@ -12,7 +12,7 @@ jobs:
     - name: Validate tag
       id: validate
       run: |
-            TAG=${GITHUB_REF#refs/tags/}
+            TAG=v0.6.0
             if [[ $TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "Tag $TAG is valid."
             echo "::set-output name=tag::$TAG"
