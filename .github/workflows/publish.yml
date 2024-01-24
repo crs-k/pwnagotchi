@@ -89,7 +89,7 @@ jobs:
           if (!release) {
             throw new Error(`No pre-release found for tag ${tag}`)
           }
-          console.log(`Returning release with id: ${release.upload_url}`)
+          console.log(`Returning release with url: ${release.upload_url}`)
           return release.upload_url
 
     - name: Get Release ID
@@ -109,20 +109,21 @@ jobs:
           console.log(`Returning release with id: ${release.id}`)
           return release.id
     
-    - name: Update Release
-      uses: actions/github-script@v7
-      with:
-        script: |
-          console.log(`Updating release with id: ${{ steps.get_release_id.outputs.result.id }}`)
-          github.rest.repos.updateRelease({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            release_id: ${{ steps.get_release_id.outputs.result.id }},
-            tag_name: "${{ steps.validate.outputs.tag }}",
-            name: "${{ steps.validate.outputs.tag }}",
-            draft: false,
-            prerelease: true
-          })
+          - name: Update Release
+          uses: actions/github-script@v7
+          with:
+            script: |
+              const release_id = "${{ steps.get_release_id.outputs.result }}"
+              console.log(`Updating release with id: ${release_id}`)
+              github.rest.repos.updateRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: release_id,
+                tag_name: "${{ steps.validate.outputs.tag }}",
+                name: "${{ steps.validate.outputs.tag }}",
+                draft: false,
+                prerelease: true
+              })
 
     - name: Upload Release Asset
       id: upload-release-asset 
@@ -130,7 +131,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.get_release.outputs.result.upload_url }}
+        upload_url: ${{ steps.get_release_url.outputs.result }}
         asset_path: ./pwnagotchi-${{ steps.validate.outputs.tag }}.zip
         asset_name: pwnagotchi-${{ steps.validate.outputs.tag }}.zip
         asset_content_type: application/zip
