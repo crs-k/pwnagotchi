@@ -109,21 +109,21 @@ jobs:
           console.log(`Returning release with id: ${release.id}`)
           return release.id
     
-          - name: Update Release
-          uses: actions/github-script@v7
-          with:
-            script: |
-              const release_id = "${{ steps.get_release_id.outputs.result }}"
-              console.log(`Updating release with id: ${release_id}`)
-              github.rest.repos.updateRelease({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                release_id: release_id,
-                tag_name: "${{ steps.validate.outputs.tag }}",
-                name: "${{ steps.validate.outputs.tag }}",
-                draft: false,
-                prerelease: true
-              })
+    - name: Update Release
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const release_id = "${{ steps.get_release_id.outputs.result }}"
+          console.log(`Updating release with id: ${release_id}`)
+          github.rest.repos.updateRelease({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            release_id: release_id,
+            tag_name: "${{ steps.validate.outputs.tag }}",
+            name: "${{ steps.validate.outputs.tag }}",
+            draft: false,
+            prerelease: true
+          })
 
     - name: Upload Release Asset
       id: upload-release-asset 
