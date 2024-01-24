@@ -89,7 +89,7 @@ jobs:
             throw new Error(`No pre-release found for tag ${tag}`)
           }
           console.log(`Returning release with id: ${release.id}`)
-          return { upload_url: release.upload_url, release_id: release.id }
+          return { result: { id: release.id, upload_url: release.upload_url } }
     
     - name: Update Release
       uses: actions/github-script@v7
