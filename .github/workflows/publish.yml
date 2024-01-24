@@ -62,8 +62,8 @@ jobs:
     - name: Compile Languages
       run: make compile_langs
 
-    - name: Run Makefile
-      run: make
+    #- name: Run Makefile
+    #  run: make
 
 
     - name: Get Release URL
@@ -129,12 +129,18 @@ jobs:
           const tag = "${{ steps.validate.outputs.tag }}";
           const asset_content_type = 'application/octet-stream';
     
+          console.log(`Looking for .img files that contain "${tag}" in their names...`);
+    
           const files = fs.readdirSync('.').filter(file => file.includes(tag) && path.extname(file) === '.img');
+    
+          console.log(`Found ${files.length} file(s):`, files);
     
           for (const file of files) {
             const asset_path = `./${file}`;
             const asset_name = file;
             const asset = fs.readFileSync(asset_path);
+    
+            console.log(`Uploading ${file}...`);
     
             const response = await github.rest.repos.uploadReleaseAsset({
               owner: context.repo.owner,
