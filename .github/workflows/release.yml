@@ -46,7 +46,6 @@ jobs:
       run: make image
       env: 
         PWN_VERSION: ${{ inputs.release_version }}
-        GOARCH: Armhf
 
     - name: Shrink Image
       run: |
