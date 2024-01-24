@@ -81,11 +81,14 @@ jobs:
         script: |
           const { owner, repo } = context.repo
           const tag = "${{ steps.validate.outputs.tag }}"
+          console.log(`Searching for pre-release with tag: ${tag}`)
           const releases = await github.rest.repos.listReleases({ owner, repo })
+          console.log(`Found ${releases.data.length} releases`)
           const release = releases.data.find(r => r.tag_name === tag && r.prerelease === true)
           if (!release) {
             throw new Error(`No pre-release found for tag ${tag}`)
           }
+          console.log(`Returning release with id: ${release.id}`)
           return { upload_url: release.upload_url, id: release.id }
         
     - name: Update Release
