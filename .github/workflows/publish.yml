@@ -29,50 +29,50 @@ jobs:
       with:
         python-version: 3.8
     
-    # - name: Install system dependencies
-    #   run: sudo apt-get update && sudo apt-get install -y libdbus-1-dev
+    - name: Install system dependencies
+      run: sudo apt-get update && sudo apt-get install -y libdbus-1-dev
 
-    # - name: Install dependencies
-    #   run: |
-    #     sudo apt-get install -y curl unzip
-    #     pip install -r requirements.txt
+    - name: Install dependencies
+      run: |
+        sudo apt-get install -y curl unzip
+        pip install -r requirements.txt
 
-    # - name: Install language dependencies
-    #   run:  sudo apt-get update && sudo apt-get install -y gettext && sudo apt-get install qemu-utils 
+    - name: Install language dependencies
+      run:  sudo apt-get update && sudo apt-get install -y gettext && sudo apt-get install qemu-utils 
     
     - name: Set _version.py correctly using the env variable
       run: sed -i "s#.*__version__.*#__version__='${{ steps.validate.outputs.tag }}'#" pwnagotchi/_version.py
 
-    # - name: Install QEMU
-    #   run: |
-    #     sudo apt-get update
-    #     sudo apt-get install -y qemu qemu-user-static binfmt-support
-    #     sudo update-binfmts --enable qemu-arm
-    #     sudo update-binfmts --enable qemu-aarch64
+    - name: Install QEMU
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y qemu qemu-user-static binfmt-support
+        sudo update-binfmts --enable qemu-arm
+        sudo update-binfmts --enable qemu-aarch64
 
-    # - name: Restart binfmt-support
-    #   run: sudo service binfmt-support restart
+    - name: Restart binfmt-support
+      run: sudo service binfmt-support restart
 
-    # - name: Mount binfmt_misc
-    #   run: |
-    #     if ! grep -qs '/proc/sys/fs/binfmt_misc ' /proc/mounts; then
-    #       sudo mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
-    #     fi
+    - name: Mount binfmt_misc
+      run: |
+        if ! grep -qs '/proc/sys/fs/binfmt_misc ' /proc/mounts; then
+          sudo mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
+        fi
 
-    # - name: Restart binfmt-support
-    #   run: sudo service binfmt-support restart
+    - name: Restart binfmt-support
+      run: sudo service binfmt-support restart
 
-    # - name: Update Languages
-    #   run: make update_langs
+    - name: Update Languages
+      run: make update_langs
     
-    # - name: Compile Languages
-    #   run: make compile_langs
+    - name: Compile Languages
+      run: make compile_langs
 
-    # - name: Run Makefile
-    #   run: make
+    - name: Run Makefile
+      run: make
 
-    # - name: Zip the image
-    #   run: zip -r pwnagotchi-${{ steps.validate.outputs.tag }}.zip pwnagotchi
+    - name: Zip the image
+      run: zip -r pwnagotchi-${{ steps.validate.outputs.tag }}.zip pwnagotchi
 
 
     - name: Get Release URL
