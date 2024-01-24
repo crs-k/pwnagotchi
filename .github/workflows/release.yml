@@ -35,7 +35,11 @@ jobs:
 
     - name: Install language dependencies
       run:  sudo apt-get update && sudo apt-get install -y gettext && sudo apt-get install qemu-utils qemu-user-static binfmt-support 
-
+    - name: Load binfmt_misc module
+      run: |
+        sudo mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
+        sudo apt-get install -y --no-install-recommends binfmt-support
+        sudo update-binfmts --enable qemu-arm
     - name: Update Languages
       run: make update_langs
     
