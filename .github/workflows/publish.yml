@@ -1,4 +1,4 @@
-name: Build and Release
+name: Publish
 # ${GITHUB_REF#refs/tags/}
 on:
     workflow_dispatch:
@@ -6,7 +6,7 @@ on:
       types: [prereleased]
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
     steps:
     - name: Validate tag
@@ -91,15 +91,14 @@ jobs:
           if (!release) {
             throw new Error(`No pre-release found for tag ${tag}`)
           }
-          return release.id
-        result-encoding: string
+          return { upload_url: release.upload_url, id: release.id }
 
     - name: Update Release
       uses: actions/github-script@v5
       with:
         script: |
           const { owner, repo } = context.repo
-          const release_id = ${{ steps.get_release.outputs.result }}
+          const release_id = ${{ steps.get_release.outputs.result.id }}
           const tag = "${{ steps.validate.outputs.tag }}"
           await github.rest.repos.updateRelease({ owner, repo, release_id, tag_name: tag, name: tag, draft: false, prerelease: false })
 
@@ -109,7 +108,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.get_release.outputs.result }}
+        upload_url: ${{ steps.get_release.outputs.result.upload_url }}
         asset_path: ./pwnagotchi-${{ steps.validate.outputs.tag }}.zip
         asset_name: pwnagotchi-${{ steps.validate.outputs.tag }}.zip
         asset_content_type: application/zip
