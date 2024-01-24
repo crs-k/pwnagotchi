@@ -90,20 +90,23 @@ jobs:
           }
           console.log(`Returning release with id: ${release.id}`)
           return { upload_url: release.upload_url, id: release.id }
-        
+    
     - name: Update Release
       uses: actions/github-script@v7
       with:
         script: |
+          const release_id = "${{ steps.get_release.outputs.result.id }}"
+          console.log(`Updating release with id: ${release_id}`)
           github.rest.repos.updateRelease({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            release_id: "${{ steps.get_release.outputs.result.id }}",
+            release_id: release_id,
             tag_name: "${{ steps.validate.outputs.tag }}",
             name: "${{ steps.validate.outputs.tag }}",
             draft: false,
             prerelease: false
           })
+
     - name: Upload Release Asset
       id: upload-release-asset 
       uses: actions/upload-release-asset@v1
