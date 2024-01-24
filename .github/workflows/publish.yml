@@ -95,7 +95,7 @@ jobs:
           github.rest.repos.updateRelease({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            release_id: ${{ steps.get_release.outputs.result.id }},
+            release_id: "${{ steps.get_release.outputs.result.id }}",
             tag_name: "${{ steps.validate.outputs.tag }}",
             name: "${{ steps.validate.outputs.tag }}",
             draft: false,
