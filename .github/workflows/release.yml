@@ -34,10 +34,13 @@ jobs:
         PWN_VERSION: ${{ inputs.release_version }}
 
     - name: Install language dependencies
-      run: sudo apt-get install -y gettext
+      run:  sudo apt-get update && sudo apt-get install -y gettext && sudo apt-get install qemu-utils qemu-user-static binfmt-support 
 
-    - name: Languages
-      run: make langs
+    - name: Update Languages
+      run: make update_langs
+    
+    - name: Compile Languages
+      run: make compile_langs
 
     - name: Image
       run: make image
