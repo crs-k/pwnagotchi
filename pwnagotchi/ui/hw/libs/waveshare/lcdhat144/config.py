@@ -38,9 +38,9 @@ Device = Device_SPI
  # THE SOFTWARE.
  #
  
-import spidev
-import RPi.GPIO as GPIO
-import time
+import spidev  # noqa: E402
+import RPi.GPIO as GPIO # noqa: E402
+import time # noqa: E402
 
 # Pin definition
 LCD_RST_PIN         = 27

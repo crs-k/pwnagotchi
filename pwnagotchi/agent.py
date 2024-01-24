@@ -301,7 +301,7 @@ class Agent(Client, Automata, AsyncAdvertiser, AsyncTrainer):
                 if delete:
                     logging.info("deleting %s", RECOVERY_DATA_FILE)
                     os.unlink(RECOVERY_DATA_FILE)
-        except:
+        except:  
             if not no_exceptions:
                 raise
 

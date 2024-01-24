@@ -1,12 +1,11 @@
 import unittest
 import sys
 import os
+from pwnagotchi import _version
 
 # Get the directory of the current file and add it to the system path
 current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_dir + '/../')  # adjust this to the correct relative path
-
-from pwnagotchi import _version
 
 class TestVersion(unittest.TestCase):
     def test_version(self):

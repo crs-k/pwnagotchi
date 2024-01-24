@@ -4,7 +4,7 @@ import random
 import time
 from threading import Lock
 
-from PIL import ImageDraw
+from PIL import ImageDraw, Image
 
 import pwnagotchi
 import pwnagotchi.plugins as plugins
@@ -12,7 +12,7 @@ import pwnagotchi.ui.faces as faces
 import pwnagotchi.ui.fonts as fonts
 import pwnagotchi.ui.web as web
 import pwnagotchi.utils as utils
-from pwnagotchi.ui.components import *
+from pwnagotchi.ui.components import LabeledValue, Line, Text
 from pwnagotchi.ui.state import State
 from pwnagotchi.voice import Voice
 

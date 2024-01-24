@@ -1,0 +1,13 @@
+[lint]
+ignore = [
+    "E722", #Do not use bare `except`
+    "E741", #Ambiguous variable name
+    "F405", #May be undefined or defned from star imports
+    "E711", #Comparison to `None` should be `cond is not None`
+    "E701", #Multiple statements on one line (colon)
+    "F841", #Local variable `parser_google_refresh` is assigned to but never used
+    "E712", #Comparison to `False` should be `cond is not False` or `if cond:`
+    "F401", #imported but unused
+    
+
+] 

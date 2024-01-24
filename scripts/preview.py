@@ -3,15 +3,13 @@ import sys
 import os
 import argparse
 import yaml
-
-sys.path.insert(0,
-                os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                             '../'))
-
 import pwnagotchi.ui.faces as faces
 from pwnagotchi.ui.display import Display
 from PIL import Image
 
+sys.path.insert(0,
+                os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                             '../'))
 
 class CustomDisplay(Display):
 

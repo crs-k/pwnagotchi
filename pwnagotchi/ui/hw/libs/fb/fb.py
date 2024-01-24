@@ -1,3 +1,7 @@
+from mmap import mmap
+from fcntl import ioctl
+import struct
+
 FBIOGET_VSCREENINFO=0x4600
 FBIOPUT_VSCREENINFO=0x4601
 FBIOGET_FSCREENINFO=0x4602
@@ -15,9 +19,7 @@ FBIOGET_HWCINFO=0x4616
 FBIOPUT_MODEINFO=0x4617
 FBIOGET_DISPINFO=0x4618
 
-from mmap import mmap
-from fcntl import ioctl
-import struct
+
 
 mm = None
 bpp, w, h = 0, 0, 0 # framebuffer bpp and size
@@ -120,7 +122,7 @@ def numpy_888_565(bt):
   return (((0xF80000 & arr)>>8)|((0xFC00 & arr)>>5)|((0xF8 & arr)>>3)).astype(np.uint16).tostring()
 
 def show_img(img):
-  if type(img) is not bytes:
+  if not isinstance(img, bytes):
     if not RGB:
       if bpp == 24: # for RPI
         img = img.tobytes('raw', 'BGR')
