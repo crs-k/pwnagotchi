@@ -79,16 +79,29 @@ jobs:
       run: zip -r pwnagotchi-${{ steps.validate.outputs.tag }}.zip pwnagotchi
 
 
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Get Release
+      id: get_release
+      uses: actions/github-script@v5
       with:
-        tag_name: ${{ steps.validate.outputs.tag }}
-        release_name: ${{ steps.validate.outputs.tag }}
-        draft: false
-        prerelease: false
+        script: |
+          const { owner, repo } = context.repo
+          const tag = "${{ steps.validate.outputs.tag }}"
+          const releases = await github.rest.repos.listReleases({ owner, repo })
+          const release = releases.data.find(r => r.tag_name === tag && r.prerelease === true)
+          if (!release) {
+            throw new Error(`No pre-release found for tag ${tag}`)
+          }
+          return release.id
+        result-encoding: string
+
+    - name: Update Release
+      uses: actions/github-script@v5
+      with:
+        script: |
+          const { owner, repo } = context.repo
+          const release_id = ${{ steps.get_release.outputs.result }}
+          const tag = "${{ steps.validate.outputs.tag }}"
+          await github.rest.repos.updateRelease({ owner, repo, release_id, tag_name: tag, name: tag, draft: false, prerelease: false })
 
     - name: Upload Release Asset
       id: upload-release-asset 
@@ -96,7 +109,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        upload_url: ${{ steps.get_release.outputs.result }}
         asset_path: ./pwnagotchi-${{ steps.validate.outputs.tag }}.zip
         asset_name: pwnagotchi-${{ steps.validate.outputs.tag }}.zip
         asset_content_type: application/zip
