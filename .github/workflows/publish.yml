@@ -1,0 +1,64 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Validate tag
+      id: validate
+      run: |
+            TAG=${GITHUB_REF#refs/tags/}
+            if [[ $TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Tag $TAG is valid."
+            echo "::set-output name=tag::$TAG"
+            else
+            echo "Tag $TAG is not a valid semantic version. Aborting."
+            exit 1
+            fi
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get install -y curl unzip
+        pip install -r requirements.txt
+
+    - name: Run Makefile
+      run: make
+
+    - name: Zip the image
+      run: zip -r pwnagotchi-${{ steps.validate.outputs.tag }}.zip pwnagotchi
+
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.validate.outputs.tag }}
+        release_name: ${{ steps.validate.outputs.tag }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./pwnagotchi-${{ steps.validate.outputs.tag }}.zip
+        asset_name: pwnagotchi-${{ steps.validate.outputs.tag }}.zip
+        asset_content_type: application/zip
