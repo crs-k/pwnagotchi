@@ -62,8 +62,8 @@ jobs:
     - name: Compile Languages
       run: make compile_langs
 
-    #- name: Run Makefile
-    #  run: make
+    - name: Run Makefile
+      run: make
 
 
     - name: Get Release URL
@@ -129,30 +129,33 @@ jobs:
           const tag = "${{ steps.validate.outputs.tag }}";
           const asset_content_type = 'application/octet-stream';
     
-          console.log(`Looking for .img files that contain "${tag}" in their names...`);
+          const filesToUpload = [
+            `../../pwnagotchi-rpi-bullseye-${tag}-arm64.img`,
+            `../../pwnagotchi-rpi-bullseye-${tag}-armhf.img`,
+            `../../pwnagotchi-opi-bullseye-${tag}-arm64.img`
+          ];
     
-          const files = fs.readdirSync('.').filter(file => file.includes(tag) && path.extname(file) === '.img');
+          for (const filePath of filesToUpload) {
+            if (fs.existsSync(filePath)) {
+              console.log(`Uploading ${filePath}...`);
     
-          console.log(`Found ${files.length} file(s):`, files);
+              const asset = fs.readFileSync(filePath);
+              const asset_name = path.basename(filePath);
     
-          for (const file of files) {
-            const asset_path = `./${file}`;
-            const asset_name = file;
-            const asset = fs.readFileSync(asset_path);
+              const response = await github.rest.repos.uploadReleaseAsset({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: release_id,
+                name: asset_name,
+                data: asset,
+                headers: {
+                  'content-type': asset_content_type,
+                  'content-length': asset.length
+                }
+              });
     
-            console.log(`Uploading ${file}...`);
-    
-            const response = await github.rest.repos.uploadReleaseAsset({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              release_id: release_id,
-              name: asset_name,
-              data: asset,
-              headers: {
-                'content-type': asset_content_type,
-                'content-length': asset.length
-              }
-            });
-    
-            console.log(`Uploaded ${file}: ${response.data.browser_download_url}`);
+              console.log(`Uploaded ${filePath}: ${response.data.browser_download_url}`);
+            } else {
+              console.log(`File ${filePath} does not exist.`);
+            }
           }
