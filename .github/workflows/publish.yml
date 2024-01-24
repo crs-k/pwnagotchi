@@ -61,6 +61,10 @@ jobs:
     - name: Restart binfmt-support
       run: sudo service binfmt-support restart
       
+    - name: Echo contents of qemu-arm and qemu-aarch64
+      run: |
+        cat /proc/sys/fs/binfmt_misc/qemu-arm
+        cat /proc/sys/fs/binfmt_misc/qemu-aarch64
 
     - name: Update Languages
       run: make update_langs
