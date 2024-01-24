@@ -89,7 +89,7 @@ jobs:
           if (!release) {
             throw new Error(`No pre-release found for tag ${tag}`)
           }
-          console.log(`Returning release with url: ${release.upload_url}`)
+          console.log(`Returning release with url: release.upload_url.replace("{?name,label}", "")`)
           return release.upload_url.replace("{?name,label}", "")
 
     - name: Get Release ID
