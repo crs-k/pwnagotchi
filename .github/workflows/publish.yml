@@ -72,11 +72,11 @@ jobs:
     - name: Compile Languages
       run: make compile_langs
 
-    - name: Run Makefile
-      run: make
+    # - name: Run Makefile
+    #   run: make
 
-    - name: Zip the image
-      run: zip -r pwnagotchi-${{ steps.validate.outputs.tag }}.zip pwnagotchi
+    # - name: Zip the image
+    #   run: zip -r pwnagotchi-${{ steps.validate.outputs.tag }}.zip pwnagotchi
 
 
     - name: Get Release
