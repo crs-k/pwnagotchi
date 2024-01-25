@@ -116,6 +116,9 @@ jobs:
             prerelease: true
           })
           
+    - name: List directory contents
+      run: ls -la
+
     - name: Upload Release Asset
       id: upload-release-asset 
       uses: actions/github-script@v5
