@@ -83,8 +83,8 @@ jobs:
     #       fi
     #     done
     
-    - name: Search for file location
-      run: find / -name "pwnagotchi-rpi-bullseye-v0.6.0-arm64.img"
+    # - name: Search for file location
+    #   run: find / -name "pwnagotchi-rpi-bullseye-v0.6.0-arm64.img"
 
     - name: Get Release URL
       id: get_release_url
@@ -131,7 +131,7 @@ jobs:
           const path = require('path');
           const release_id = "${{ steps.get_release_id.outputs.result }}";
           const asset_content_type = 'application/octet-stream';
-          const distDir = './dist/';
+          const distDir = '/home/runner/work/pwnagotchi/';
           
           const uploadFile = async (filePath) => {
             if (fs.lstatSync(filePath).isDirectory()) {
