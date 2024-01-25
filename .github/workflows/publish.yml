@@ -117,7 +117,7 @@ jobs:
           })
           
     - name: List directory contents
-      run: ls -la
+      run: ls -la /dist
 
     - name: Upload Release Asset
       id: upload-release-asset 
@@ -133,9 +133,9 @@ jobs:
           const asset_content_type = 'application/octet-stream';
     
           const filesToUpload = [
-            `../../pwnagotchi-rpi-bullseye-${tag}-arm64.img`,
-            `../../pwnagotchi-rpi-bullseye-${tag}-armhf.img`,
-            `../../pwnagotchi-opi-bullseye-${tag}-arm64.img`
+            `/dist/pwnagotchi-rpi-bullseye-${tag}-arm64.img`,
+            `/dist/pwnagotchi-rpi-bullseye-${tag}-armhf.img`,
+            `/dist/pwnagotchi-opi-bullseye-${tag}-arm64.img`
           ];
     
           for (const filePath of filesToUpload) {
