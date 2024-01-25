@@ -67,6 +67,7 @@ jobs:
       run: |
         mkdir ./dist/
         echo "test" > ./dist/test.txt
+        tar -czf ./dist/test.tar.gz -C ./dist test.txt
     
     - name: Extract .tar.gz files
       run: |
