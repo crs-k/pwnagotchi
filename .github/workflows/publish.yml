@@ -74,12 +74,15 @@ jobs:
         for file in ./dist/*.tar.gz
         do
           if [ -f "$file" ]; then
-            tar -xzf $file -C ./dist
+            tar -xzf $file -C ./dist/
             echo "Extracted $file"
             rm $file
             echo "Deleted $file"
           fi
         done
+    
+    - name: List contents of ./dist directory
+      run: ls -l ./dist/
 
     - name: Get Release URL
       id: get_release_url
@@ -126,7 +129,7 @@ jobs:
           const path = require('path');
           const release_id = "${{ steps.get_release_id.outputs.result }}";
           const asset_content_type = 'application/octet-stream';
-          const distDir = './dist';
+          const distDir = './dist/';
           
           const uploadFile = async (file) => {
             const filePath = path.join(distDir, file);
