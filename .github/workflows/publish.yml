@@ -69,22 +69,22 @@ jobs:
       #  echo "test" > ./dist/test.txt
       #  tar -czf ./dist/test.tar.gz -C ./dist test.txt
     
-    - name: Extract .tar.gz files
-      run: |
-        for file in ./dist/*.tar.gz
-        do
-          if [ -f "$file" ]; then
-            tar -xzf $file -C ./dist/
-            echo "Extracted $file"
-            ls -lR ./dist/
-            rm $file
-            echo "Deleted $file"
-            ls -lR ./dist/
-          fi
-        done
+    # - name: Extract .tar.gz files
+    #   run: |
+    #     for file in ./dist/*.tar.gz
+    #     do
+    #       if [ -f "$file" ]; then
+    #         tar -xzf $file -C ./dist/
+    #         echo "Extracted $file"
+    #         ls -lR ./dist/
+    #         rm $file
+    #         echo "Deleted $file"
+    #         ls -lR ./dist/
+    #       fi
+    #     done
     
-    - name: List contents of ./dist directory
-      run: ls -lR ./dist/
+    - name: Search for file location
+      run: find / -name "pwnagotchi-rpi-bullseye-v0.6.0-arm64.img"
 
     - name: Get Release URL
       id: get_release_url
