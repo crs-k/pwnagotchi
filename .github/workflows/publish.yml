@@ -76,8 +76,10 @@ jobs:
           if [ -f "$file" ]; then
             tar -xzf $file -C ./dist/
             echo "Extracted $file"
+            ls -l ./dist/
             rm $file
             echo "Deleted $file"
+            ls -l ./dist/
           fi
         done
     
