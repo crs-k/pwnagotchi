@@ -63,7 +63,8 @@ jobs:
       run: make compile_langs
 
     - name: Run Makefile
-      run: make
+    #  run: make
+      run: mkdir ./dist/
 
 
     - name: Get Release URL
@@ -100,21 +101,7 @@ jobs:
           console.log(`Returning release with id: ${release.id}`)
           return release.id
     
-    - name: Update Release
-      uses: actions/github-script@v7
-      with:
-        script: |
-          const release_id = "${{ steps.get_release_id.outputs.result }}"
-          console.log(`Updating release with id: ${release_id}`)
-          github.rest.repos.updateRelease({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            release_id: release_id,
-            tag_name: "${{ steps.validate.outputs.tag }}",
-            name: "${{ steps.validate.outputs.tag }}",
-            draft: false,
-            prerelease: true
-          })
+
           
     - name: Upload Release Asset
       id: upload-release-asset 
@@ -128,8 +115,8 @@ jobs:
           const release_id = "${{ steps.get_release_id.outputs.result }}";
           const asset_content_type = 'application/octet-stream';
           const distDir = './dist';
-    
-          fs.readdirSync(distDir).forEach(file => {
+          
+          const uploadFile = async (file) => {
             const filePath = path.join(distDir, file);
             console.log(`Uploading ${filePath}...`);
     
@@ -149,4 +136,25 @@ jobs:
             });
     
             console.log(`Uploaded ${filePath}: ${response.data.browser_download_url}`);
-          });
+          }
+    
+          const files = fs.readdirSync(distDir);
+          for (const file of files) {
+            await uploadFile(file);
+          }
+
+    - name: Update Release
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const release_id = "${{ steps.get_release_id.outputs.result }}"
+          console.log(`Updating release with id: ${release_id}`)
+          github.rest.repos.updateRelease({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            release_id: release_id,
+            tag_name: "${{ steps.validate.outputs.tag }}",
+            name: "${{ steps.validate.outputs.tag }}",
+            draft: false,
+            prerelease: true
+          })
