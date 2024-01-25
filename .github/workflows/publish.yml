@@ -64,7 +64,9 @@ jobs:
 
     - name: Run Makefile
       #run: make
-      run: mkdir ./dist/
+      run: |
+        mkdir ./dist/
+        touch ./dist/test.txt
     
     - name: Extract .tar.gz files
       run: |
