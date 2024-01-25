@@ -130,11 +130,14 @@ jobs:
           
           const uploadFile = async (file) => {
             const filePath = path.join(distDir, file);
+            if (fs.lstatSync(filePath).isDirectory()) {
+              return;
+            }
             console.log(`Uploading ${filePath}...`);
-    
+      
             const asset = fs.readFileSync(filePath);
             const asset_name = path.basename(filePath);
-    
+      
             const response = await github.rest.repos.uploadReleaseAsset({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -146,10 +149,10 @@ jobs:
                 'content-length': asset.length
               }
             });
-    
+      
             console.log(`Uploaded ${filePath}: ${response.data.browser_download_url}`);
           }
-    
+      
           const files = fs.readdirSync(distDir);
           for (const file of files) {
             await uploadFile(file);
