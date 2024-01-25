@@ -63,9 +63,20 @@ jobs:
       run: make compile_langs
 
     - name: Run Makefile
-    #  run: make
+      #run: make
       run: mkdir ./dist/
-
+    
+    - name: Extract .tar.gz files
+      run: |
+        for file in ./dist/*.tar.gz
+        do
+          if [ -f "$file" ]; then
+            tar -xzf $file -C ./dist
+            echo "Extracted $file"
+            rm $file
+            echo "Deleted $file"
+          fi
+        done
 
     - name: Get Release URL
       id: get_release_url
@@ -100,8 +111,6 @@ jobs:
           }
           console.log(`Returning release with id: ${release.id}`)
           return release.id
-    
-
           
     - name: Upload Release Asset
       id: upload-release-asset 
