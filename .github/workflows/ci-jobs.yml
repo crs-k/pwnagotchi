@@ -119,5 +119,5 @@ jobs:
             base_image: https://dietpi.com/downloads/images/DietPi_RPi-ARMv8-Bullseye.7z
             cpu: cortex-a53
             commands: |
-                echo "ARM TEST - Raspberry Pi Zero W"
+                echo "ARM TEST - Raspberry Pi 02w, 3 and 4"
                 test `uname -m` = 'aarch64'
