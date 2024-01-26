@@ -66,7 +66,7 @@ jobs:
       run: make
     
     - name: Search for file location
-      run: ls -R /home/runner/work/
+      run: find /home/runner/work/ -type f -name "*.img"
 
     - name: Get Release URL
       id: get_release_url
@@ -104,7 +104,7 @@ jobs:
 
     - name: Compress .img files
       run: |
-        find /home/runner/work/ -type f -name "*.img" -exec xz {} \;
+         find /home/runner/work/ -type f -name "*.img" -exec xz --no-warn {} \;
 
     - name: Upload Release Asset
       id: upload-release-asset 
