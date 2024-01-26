@@ -1,8 +1,5 @@
 import os
 import json
-import logging
-
-import pwnagotchi
 import pwnagotchi.plugins as plugins
 import pwnagotchi.ui.faces as faces
 import pwnagotchi.ui.fonts as fonts

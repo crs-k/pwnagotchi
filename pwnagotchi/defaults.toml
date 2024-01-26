@@ -238,3 +238,16 @@ fs.memory.mounts.data.size = "10M"
 fs.memory.mounts.data.sync = 3600
 fs.memory.mounts.data.zram = true
 fs.memory.mounts.data.rsync = true
+
+main.plugins.age.enabled = true
+main.plugins.age.age_x_coord = 5
+main.plugins.age.age_y_coord = 32
+main.plugins.age.str_x_coord = 67
+main.plugins.age.str_y_coord = 32
+
+main.plugins.exp.enabled = true
+main.plugins.exp.lvl_x_coord = 0
+main.plugins.exp.lvl_y_coord = 90
+main.plugins.exp.exp_x_coord = 40
+main.plugins.exp.exp_y_coord = 90
+main.plugins.exp.bar_symbols_count = 12
