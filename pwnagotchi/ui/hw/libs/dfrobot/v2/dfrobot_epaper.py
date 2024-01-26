@@ -1,12 +1,10 @@
-# -*- coding:utf-8 -*-
-
 import time
-
 import sys
-sys.path.append("..")
 import RPi.GPIO as RPIGPIO
 from .dfrobot_display.dfrobot_display import DFRobot_Display
 from .display_extension import fonts_8_16 as fonts_ABC
+
+sys.path.append("..")
 
 try:
   from .spi import SPI

@@ -1,18 +1,19 @@
-name: Build and Release
-
+name: Publish
+# ${GITHUB_REF#refs/tags/}
 on:
     workflow_dispatch:
     release:
       types: [prereleased]
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
     steps:
+
     - name: Validate tag
       id: validate
       run: |
-            TAG=${GITHUB_REF#refs/tags/}
+            TAG=v0.6.0
             if [[ $TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "Tag $TAG is valid."
             echo "::set-output name=tag::$TAG"
@@ -21,43 +22,149 @@ jobs:
             exit 1
             fi
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: 3.8
-
+    
     - name: Install dependencies
+      run: | 
+           sudo apt-get update && sudo apt-get install -y libdbus-1-dev curl unzip gettext qemu-utils 
+           pip install -r requirements.txt
+    
+    - name: Set _version.py correctly using the env variable
+      run: sed -i "s#.*__version__.*#__version__='${{ steps.validate.outputs.tag }}'#" pwnagotchi/_version.py
+
+    - name: Install QEMU
       run: |
-        sudo apt-get install -y curl unzip
-        pip install -r requirements.txt
+        sudo apt-get update
+        sudo apt-get install -y qemu qemu-user-static binfmt-support
+        sudo update-binfmts --enable qemu-arm
+        sudo update-binfmts --enable qemu-aarch64
+
+    - name: Restart binfmt-support
+      run: sudo service binfmt-support restart
+
+    - name: Mount binfmt_misc
+      run: |
+        if ! grep -qs '/proc/sys/fs/binfmt_misc ' /proc/mounts; then
+          sudo mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
+        fi
+
+    - name: Restart binfmt-support
+      run: sudo service binfmt-support restart
+
+    - name: Update Languages
+      run: make update_langs
+    
+    - name: Compile Languages
+      run: make compile_langs
 
     - name: Run Makefile
       run: make
+    
+    - name: Search for file location
+      run: find /home/runner/work/ -type f -name "*.img"
 
-    - name: Zip the image
-      run: zip -r pwnagotchi-${{ steps.validate.outputs.tag }}.zip pwnagotchi
-
-
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Get Release URL
+      id: get_release_url
+      uses: actions/github-script@v7
       with:
-        tag_name: ${{ steps.validate.outputs.tag }}
-        release_name: ${{ steps.validate.outputs.tag }}
-        draft: false
-        prerelease: false
+        script: |
+          const { owner, repo } = context.repo
+          const tag = "${{ steps.validate.outputs.tag }}"
+          console.log(`Searching for pre-release with tag: ${tag}`)
+          const releases = await github.rest.repos.listReleases({ owner, repo })
+          console.log(`Found ${releases.data.length} releases`)
+          const release = releases.data.find(r => r.tag_name === tag && r.prerelease === true)
+          if (!release) {
+            throw new Error(`No pre-release found for tag ${tag}`)
+          }
+          console.log(`Returning release with url: ${release.upload_url.replace("{?name,label}", "")}`)
+          return release.upload_url.replace("{?name,label}", "")
+
+    - name: Get Release ID
+      id: get_release_id
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const { owner, repo } = context.repo
+          const tag = "${{ steps.validate.outputs.tag }}"
+          console.log(`Searching for pre-release with tag: ${tag}`)
+          const releases = await github.rest.repos.listReleases({ owner, repo })
+          console.log(`Found ${releases.data.length} releases`)
+          const release = releases.data.find(r => r.tag_name === tag && r.prerelease === true)
+          if (!release) {
+            throw new Error(`No pre-release found for tag ${tag}`)
+          }
+          console.log(`Returning release with id: ${release.id}`)
+          return release.id
+
+    - name: Compress .img files
+      run: |
+         find /home/runner/work/ -type f -name "*.img" -exec xz --no-warn {} \;
 
     - name: Upload Release Asset
       id: upload-release-asset 
-      uses: actions/upload-release-asset@v1
+      uses: actions/github-script@v5
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./pwnagotchi-${{ steps.validate.outputs.tag }}.zip
-        asset_name: pwnagotchi-${{ steps.validate.outputs.tag }}.zip
-        asset_content_type: application/zip
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+          const release_id = "${{ steps.get_release_id.outputs.result }}";
+          const asset_content_type = 'application/octet-stream';
+          const distDir = '/home/runner/work/pwnagotchi/';
+          
+          const uploadFile = async (filePath) => {
+            if (fs.lstatSync(filePath).isDirectory()) {
+              const files = fs.readdirSync(filePath);
+              for (const file of files) {
+                await uploadFile(path.join(filePath, file));
+              }
+            } else {
+              // Check if the file has a .xz extension
+              if (path.extname(filePath) === '.xz') {
+                console.log(`Uploading ${filePath}...`);
+      
+                const asset_name = path.basename(filePath);
+                const asset_size = fs.statSync(filePath).size;
+                const asset = fs.createReadStream(filePath);
+      
+                const response = await github.rest.repos.uploadReleaseAsset({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  release_id: release_id,
+                  name: asset_name,
+                  data: asset,
+                  headers: {
+                    'content-type': asset_content_type,
+                    'content-length': asset_size
+                  }
+                });
+      
+                console.log(`Uploaded ${filePath}: ${response.data.browser_download_url}`);
+              }
+            }
+          }
+      
+          await uploadFile(distDir);
+          
+    - name: Update Release
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const release_id = "${{ steps.get_release_id.outputs.result }}"
+          console.log(`Updating release with id: ${release_id}`)
+          github.rest.repos.updateRelease({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            release_id: release_id,
+            tag_name: "${{ steps.validate.outputs.tag }}",
+            name: "${{ steps.validate.outputs.tag }}",
+            draft: false,
+            prerelease: true
+          })

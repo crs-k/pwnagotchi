@@ -5,12 +5,6 @@ import _thread
 import secrets
 import json
 from functools import wraps
-
-
-# https://stackoverflow.com/questions/14888799/disable-console-messages-in-flask-server
-logging.getLogger('werkzeug').setLevel(logging.ERROR)
-os.environ['WERKZEUG_RUN_MAIN'] = 'true'
-
 import pwnagotchi
 import pwnagotchi.grid as grid
 import pwnagotchi.ui.web as web
@@ -23,6 +17,13 @@ from flask import jsonify
 from flask import abort
 from flask import redirect
 from flask import render_template
+
+
+# https://stackoverflow.com/questions/14888799/disable-console-messages-in-flask-server
+logging.getLogger('werkzeug').setLevel(logging.ERROR)
+os.environ['WERKZEUG_RUN_MAIN'] = 'true'
+
+
 
 
 class Handler:
