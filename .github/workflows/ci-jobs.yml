@@ -82,9 +82,20 @@ jobs:
             python -m pip install meson
             python -m pip install dbus-python
             pip install -r requirements.txt
-        - name: Test armv6l cpu option
+
+        - name: Test armv6l - Raspberry Pi Zero W
           uses: pguyot/arm-runner-action@v2.5.2
           with:
               cpu: arm1176
               commands: |
-                  echo "ARM TEST"
+                  echo "ARM TEST - Raspberry Pi Zero W"
+                  test `uname -m` = 'armv6l'
+
+        - name: Test 64-bit - Raspberry Pi 02w, 3 and 4
+          uses: pguyot/arm-runner-action@HEAD
+          with:
+            base_image: https://dietpi.com/downloads/images/DietPi_RPi-ARMv8-Bullseye.7z
+            cpu: cortex-a53
+            commands: |
+                echo "ARM TEST - Raspberry Pi Zero W"
+                test `uname -m` = 'aarch64'
