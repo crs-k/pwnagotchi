@@ -9,7 +9,7 @@
       full: "6.1.21-v8+"
     pwnagotchi:
       hostname: "{{ lookup('env', 'PWN_HOSTNAME') | default('pwnagotchi', true) }}"
-      version: "{{ lookup('env', 'PWN_VERSION') | default('pwnagotchi-torch', true) }}"
+      version: "{{ lookup('env', 'PWN_VERSION') | default('pwnagotchi', true) }}"
     system:
       boot_options:
         - "dtoverlay=dwc2"
@@ -315,7 +315,7 @@
 
     - name: clone pwnagotchi repository
       git:
-        repo: https://github.com/jayofelony/pwnagotchi.git
+        repo: https://github.com/crs-k/pwnagotchi.git
         dest: /usr/local/src/pwnagotchi
       register: pwnagotchigit
 
