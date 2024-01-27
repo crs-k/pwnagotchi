@@ -7,4 +7,5 @@ ignore = [
     "E701", #Multiple statements on one line (colon)
     "F841", #Local variable `parser_google_refresh` is assigned to but never used
     "E712", #Comparison to `False` should be `cond is not False` or `if cond:`
+    "F401", #imported but unused
 ] 
