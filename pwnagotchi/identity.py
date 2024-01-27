@@ -66,7 +66,7 @@ class KeyPair(object):
                     shutil.copy(self.fingerprint_path, f'{self.fingerprint_path}.original')
                 return
 
-            except Exception:
+            except Exception as e:
                 # if we're here, loading the keys broke something ...
                 logging.exception("error loading keys, maybe corrupted, deleting and regenerating ...")
                 try:
