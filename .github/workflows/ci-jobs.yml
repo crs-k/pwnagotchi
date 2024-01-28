@@ -57,8 +57,7 @@ jobs:
             pip install -r requirements.txt
         - name: Unit Test
           run: |
-            echo "okay"
-          #python -m unittest discover -p "test_*.py" -v
+            python3 -m unittest discover -p "test_*.py" -v
 
  
   Build-32:
