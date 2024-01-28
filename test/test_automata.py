@@ -114,7 +114,8 @@ class TestAutomata(unittest.TestCase):
             assert self.automata.in_good_mood() == True
             mock_has_support.assert_called_once_with(1.0)
 
-    def test_next_epoch(self):
+    @patch('pwnagotchi.temperature', return_value=50)
+    def test_next_epoch(self, mock_temperature):
         with patch('pwnagotchi.plugins.on') as mock_on, \
             patch.object(self.automata, 'set_angry') as mock_set_angry:
             self.automata._epoch.num_missed = 10
