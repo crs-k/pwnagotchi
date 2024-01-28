@@ -56,6 +56,10 @@ jobs:
     - name: Restart binfmt-support
       run: sudo service binfmt-support restart
 
+    - name: Set _version.py via release tag
+      run: |
+        sed -i "s#.*__version__.*#__version__='${{ steps.validate.outputs.tag }}'#" pwnagotchi/_version.py
+
     - name: Update Languages
       run: make update_langs
     
