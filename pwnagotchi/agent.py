@@ -21,6 +21,8 @@ RECOVERY_DATA_FILE = '/root/.pwnagotchi-recovery'
 
 class Agent(Client, Automata, AsyncAdvertiser, AsyncTrainer):
     def __init__(self, view, config, keypair):
+        self._keypair = keypair
+        self._config = config
         Client.__init__(self, config['bettercap']['hostname'],
                         config['bettercap']['scheme'],
                         config['bettercap']['port'],
