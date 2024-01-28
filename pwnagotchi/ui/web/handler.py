@@ -9,6 +9,8 @@ import pwnagotchi
 import pwnagotchi.grid as grid
 import pwnagotchi.ui.web as web
 from pwnagotchi import plugins
+import subprocess
+
 
 from flask import send_file
 from flask import Response
@@ -189,8 +191,10 @@ class Handler:
             return 'success' if plugins.toggle_plugin(request.form['plugin'], checked) else 'failed'
 
         if name == 'upgrade' and request.method == 'POST':
-            logging.info(f"Upgrading plugin: {request.form['plugin']}")
-            os.system(f"pwnagotchi plugins update && pwnagotchi plugins upgrade {request.form['plugin']}")
+            plugin_name = request.form['plugin']
+            logging.info(f"Upgrading plugin: {plugin_name}")
+            subprocess.run(['pwnagotchi', 'plugins', 'update'], check=True)
+            subprocess.run(['pwnagotchi', 'plugins', 'upgrade', plugin_name], check=True)
             return redirect("/plugins")
 
         if name in plugins.loaded and plugins.loaded[name] is not None and hasattr(plugins.loaded[name], 'on_webhook'):
