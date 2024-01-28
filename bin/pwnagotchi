@@ -135,8 +135,6 @@ if __name__ == '__main__':
     # Jayofelony added these
     parser.add_argument('--check-update', dest="check_update", action="store_true", default=False,
                         help="Check for updates on Pwnagotchi. And tells current version.")
-    parser.add_argument('--donate', dest="donate", action="store_true", default=False,
-                        help="How to donate to this project.")
 
     # pwnagotchi plugins --help
     add_parsers(parser)
@@ -155,13 +153,6 @@ if __name__ == '__main__':
 
     if args.version:
         print(pwnagotchi.__version__)
-        sys.exit(0)
-
-    if args.donate:
-        print("Donations can made @ \n "
-              "https://www.patreon.com/pwnagotchi_torch \n "
-              "https://github.com/sponsors/jayofelony \n\n"
-              "But only if you really want to!")
         sys.exit(0)
 
     if args.check_update:
