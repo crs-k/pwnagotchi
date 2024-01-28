@@ -15,11 +15,6 @@ class TestKeyPair(unittest.TestCase):
         subprocess.run(['python3', gen_testkey_path, self.temp_dir.name])
         self.key_pair = KeyPair(path=self.temp_dir.name, view=self.view_mock)
 
-
-
-    def test_one_equals_one(self):
-        self.assertEqual(1, 1)
-
     @patch('os.system')
     @patch('os.path.exists')
     @patch('os.makedirs')
