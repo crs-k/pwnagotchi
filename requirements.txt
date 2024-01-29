@@ -1,3 +1,4 @@
+rich
 gym
 shimmy; platform_machine!="armv6l"
 pycryptodome
