@@ -6,7 +6,7 @@ import glob
 import re
 import shutil
 from fnmatch import fnmatch
-from pwnagotchi.utils import download_file, unzip, save_config, parse_version, md5
+from pwnagotchi.utils import download_file, unzip, save_config, convert_version, md5
 from pwnagotchi.plugins import default_path
 
 
@@ -257,7 +257,7 @@ def _extract_version(filename):
     plugin_content = open(filename, 'rt').read()
     m = re.search(r'__version__[\t ]*=[\t ]*[\'\"]([^\"\']+)', plugin_content)
     if m:
-        return parse_version(m.groups()[0])
+        return convert_version(m.groups()[0])
     return None
 
 
