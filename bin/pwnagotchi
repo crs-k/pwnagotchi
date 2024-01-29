@@ -170,12 +170,12 @@ if __name__ == '__main__':
                 if os.path.exists('/root/.auto-update'):
                     os.system("rm /root/.auto-update && systemctl restart pwnagotchi")
                 else:
-                    logging.error("You should make sure auto-update is enabled!")
-                print("Check pwnlog for updates.")
+                    logging.error("Auto-update is not enabled.")
+                print("Update requested, check logs for progress.")
             elif user_input.lower() in ('n', 'no'):  # using this elif for readability
                 print("Update cancelled.")
         else:
-            print("You are currently on the latest release, v%s." % pwnagotchi.__version__)
+            print("You are currently on the latest release, %s. Remote version is %s" % (pwnagotchi.__version__, latest_ver))
         sys.exit(0)
 
     config = utils.load_config(args)
