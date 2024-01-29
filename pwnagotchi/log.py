@@ -220,7 +220,7 @@ def setup_logging(args, config):
     cfg = config['main']['log']
     filename = cfg['path']
 
-    formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
+    formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(filename)s/%(funcName)s:%(lineno)s >> %(message)s")
     root = logging.getLogger()
 
     root.setLevel(logging.DEBUG if args.debug else logging.INFO)
