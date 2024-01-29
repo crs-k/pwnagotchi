@@ -14,6 +14,7 @@ from toml.encoder import TomlEncoder, _dump_str
 from zipfile import ZipFile
 from datetime import datetime
 from enum import Enum
+from packaging.version import parse as parse_version
 
 
 class DottedTomlEncoder(TomlEncoder):
@@ -61,11 +62,9 @@ class DottedTomlEncoder(TomlEncoder):
         return retstr, self._dict()
 
 
-def parse_version(version):
-    """
-    Converts a version str to tuple, so that versions can be compared
-    """
-    return tuple(version.split('.'))
+def convert_version(version):
+    converted_version = parse_version(version)
+    return converted_version
 
 
 def remove_whitelisted(list_of_handshakes, list_of_whitelisted_strings, valid_on_error=True):

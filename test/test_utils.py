@@ -1,12 +1,13 @@
 import unittest
-from pwnagotchi.utils import DottedTomlEncoder, total_unique_handshakes, iface_channels, led, md5, blink, secs_to_hhmmss, load_config, parse_version, remove_whitelisted, download_file, unzip, merge_config, keys_to_str, save_config
+from pwnagotchi.utils import DottedTomlEncoder, total_unique_handshakes, iface_channels, led, md5, blink, secs_to_hhmmss, load_config, convert_version, remove_whitelisted, download_file, unzip, merge_config, keys_to_str, save_config
 import os
 import toml
 from unittest.mock import patch, mock_open
+from packaging.version import Version
 
 class TestUtils(unittest.TestCase):
-    def test_parse_version(self):
-        self.assertEqual(parse_version('1.2.3'), ('1', '2', '3'))
+    def test_convert_version(self):
+        self.assertEqual(convert_version('1.2.3'), Version('1.2.3'))
 
     def test_remove_whitelisted(self):
         handshakes = ['test1.pcap', 'test2.pcap', 'test3.pcap']
