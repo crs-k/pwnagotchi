@@ -11,7 +11,7 @@ import time
 
 import pwnagotchi
 import pwnagotchi.plugins as plugins
-from pwnagotchi.utils import StatusFile, parse_version as version_to_tuple
+from pwnagotchi.utils import StatusFile, convert_version
 
 
 def check(version, repo, native=True):
@@ -27,12 +27,12 @@ def check(version, repo, native=True):
 
     resp = requests.get("https://api.github.com/repos/%s/releases/latest" % repo)
     latest = resp.json()
-    info['available'] = latest_ver = latest['tag_name'].replace('v', '')
+    info['available'] = latest_ver = latest['tag_name']
     is_arm = info['arch'].startswith('arm')
     is_arm64 = info['arch'].startswith('aarch')
 
-    local = version_to_tuple(info['current'])
-    remote = version_to_tuple(latest_ver)
+    local = convert_version(info['current'])
+    remote = convert_version(latest_ver)
     if remote > local:
         if not native:
             info['url'] = "https://github.com/%s/archive/%s.zip" % (repo, latest['tag_name'])
