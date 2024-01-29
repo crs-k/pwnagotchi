@@ -26,14 +26,20 @@ jobs:
           python -m pip install dbus-python
           pip install -r requirements.txt
 
-      - name: Download and unzip 32-bit base image
+      - name: Download 32-bit base image
         run: |
           wget -O 32base_image.img.xz https://github.com/crs-k/pwnagotchi/releases/download/${{ github.event.workflow_run.head_branch }}/pwnagotchi-rpi-bullseye-${{ github.event.workflow_run.head_branch }}-armhf.img.xz 
+      
+      - name: Unzip 32-bit base image
+        run: |
           xz -d 32base_image.img.xz
           
       - name: Download and unzip 64-bit base image
         run: |
           wget -O 64base_image.img.xz https://github.com/crs-k/pwnagotchi/releases/download/${{ github.event.workflow_run.head_branch }}/pwnagotchi-rpi-bullseye-${{ github.event.workflow_run.head_branch }}-arm64.img.xz
+
+      - name: Unzip 64-bit base image
+        run: |
           xz -d 64base_image.img.xz
 
       - name: Test armv6l - Raspberry Pi Zero W 
