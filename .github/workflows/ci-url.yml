@@ -26,10 +26,20 @@ jobs:
           python -m pip install dbus-python
           pip install -r requirements.txt
 
+      - name: Download and unzip 32-bit base image
+        run: |
+          wget -O 32base_image.xz https://github.com/crs-k/pwnagotchi/releases/download/${{  github.ref_name }}/pwnagotchi-rpi-bullseye-${{  github.ref_name }}-armhf.img.xz 
+          xz -d 32base_image.xz
+          
+      - name: Download and unzip 64-bit base image
+        run: |
+          wget -O 64base_image.xz https://github.com/crs-k/pwnagotchi/releases/download/${{  github.ref_name }}/pwnagotchi-rpi-bullseye-${{  github.ref_name }}-arm64.img.xz
+          xz -d 64base_image.xz
+
       - name: Test armv6l - Raspberry Pi Zero W 
         uses: pguyot/arm-runner-action@v2.5.2
         with:
-          base_image: https://github.com/crs-k/pwnagotchi/releases/download/${{  github.ref_name }}/pwnagotchi-rpi-bullseye-${{  github.ref_name }}-arm64.img.xz
+          base_image: ./32base_image.img
           cpu: arm1176
           commands: |
               echo "ARM TEST - Raspberry Pi Zero W"
@@ -38,7 +48,7 @@ jobs:
       - name: Test 64-bit - Raspberry Pi 02w, 3 and 4
         uses: pguyot/arm-runner-action@v2.5.2
         with:
-          base_image: https://github.com/crs-k/pwnagotchi/releases/download/${{  github.ref_name }}/pwnagotchi-rpi-bullseye-${{  github.ref_name }}-arm64.img.xz
+          base_image: ./64base_image.img
           cpu: cortex-a53
           commands: |
               echo "ARM TEST - Raspberry Pi 02w, 3 and 4"
