@@ -7,7 +7,7 @@ import shutil
 import gzip
 import warnings
 from datetime import datetime
-
+from rich.logging import RichHandler
 from pwnagotchi.voice import Voice
 from pwnagotchi.mesh.peer import Peer
 from file_read_backwards import FileReadBackwards
@@ -219,10 +219,9 @@ class LastSession(object):
 def setup_logging(args, config):
     cfg = config['main']['log']
     filename = cfg['path']
-
     formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(filename)s/%(funcName)s:%(lineno)s >> %(message)s")
     root = logging.getLogger()
-
+    root.addHandler(RichHandler(rich_tracebacks=True))
     root.setLevel(logging.DEBUG if args.debug else logging.INFO)
 
     if filename:
