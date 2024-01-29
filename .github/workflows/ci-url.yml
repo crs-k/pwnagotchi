@@ -28,18 +28,18 @@ jobs:
 
       - name: Download and unzip 32-bit base image
         run: |
-          wget -O 32base_image.xz https://github.com/crs-k/pwnagotchi/releases/download/${{ github.event.workflow_run.head_branch }}/pwnagotchi-rpi-bullseye-${{ github.event.workflow_run.head_branch }}-armhf.img.xz 
-          xz -d 32base_image.xz
+          wget -O 32base_image.img.xz https://github.com/crs-k/pwnagotchi/releases/download/${{ github.event.workflow_run.head_branch }}/pwnagotchi-rpi-bullseye-${{ github.event.workflow_run.head_branch }}-armhf.img.xz 
+          xz -d 32base_image.img.xz
           
       - name: Download and unzip 64-bit base image
         run: |
-          wget -O 64base_image.xz https://github.com/crs-k/pwnagotchi/releases/download/${{ github.event.workflow_run.head_branch }}/pwnagotchi-rpi-bullseye-${{ github.event.workflow_run.head_branch }}-arm64.img.xz
-          xz -d 64base_image.xz
+          wget -O 64base_image.img.xz https://github.com/crs-k/pwnagotchi/releases/download/${{ github.event.workflow_run.head_branch }}/pwnagotchi-rpi-bullseye-${{ github.event.workflow_run.head_branch }}-arm64.img.xz
+          xz -d 64base_image.img.xz
 
       - name: Test armv6l - Raspberry Pi Zero W 
         uses: pguyot/arm-runner-action@v2.5.2
         with:
-          base_image: ./32base_image.img
+          base_image: /home/runner/work/pwnagotchi/32base_image.img
           cpu: arm1176
           commands: |
               echo "ARM TEST - Raspberry Pi Zero W"
@@ -48,7 +48,7 @@ jobs:
       - name: Test 64-bit - Raspberry Pi 02w, 3 and 4
         uses: pguyot/arm-runner-action@v2.5.2
         with:
-          base_image: ./64base_image.img
+          base_image: /home/runner/work/pwnagotchi/64base_image.img
           cpu: cortex-a53
           commands: |
               echo "ARM TEST - Raspberry Pi 02w, 3 and 4"
