@@ -158,7 +158,7 @@ if __name__ == '__main__':
     if args.check_update:
         resp = requests.get("https://api.github.com/repos/crs-k/pwnagotchi/releases/latest")
         latest = resp.json()
-        latest_ver = latest['tag_name'].replace('v', '')
+        latest_ver = latest['tag_name']
 
         local = convert_version(pwnagotchi.__version__)
         remote = convert_version(latest_ver)
