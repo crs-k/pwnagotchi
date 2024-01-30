@@ -48,7 +48,7 @@ jobs:
       - name: Test armv6l - Raspberry Pi Zero W 
         uses: pguyot/arm-runner-action@v2.5.2
         with:
-          base_image: file://localhost${GITHUB_WORKSPACE}/32base_image.img
+          base_image: file:/${GITHUB_WORKSPACE}/32base_image.img
           cpu: arm1176
           commands: |
               echo "ARM TEST - Raspberry Pi Zero W"
@@ -57,7 +57,7 @@ jobs:
       - name: Test 64-bit - Raspberry Pi 02w, 3 and 4
         uses: pguyot/arm-runner-action@v2.5.2
         with:
-          base_image: file://localhost${GITHUB_WORKSPACE}/64base_image.img
+          base_image: file:/${GITHUB_WORKSPACE}/64base_image.img
           cpu: cortex-a53
           commands: |
               echo "ARM TEST - Raspberry Pi 02w, 3 and 4"

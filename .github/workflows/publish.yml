@@ -21,8 +21,15 @@ jobs:
             echo "Tag $TAG is not a valid semantic version. Aborting."
             exit 1
             fi
+
     - name: Checkout code
       uses: actions/checkout@v4
+
+    - name: Set _version.py via release tag
+      run: |
+        sed -i "s#.*__version__.*#__version__='${{ steps.validate.outputs.tag }}'#" ./pwnagotchi/_version.py
+        echo "Contents of _version.py after modification:"
+        cat ./pwnagotchi/_version.py
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -58,12 +65,6 @@ jobs:
     
     - name: Compile Languages
       run: make compile_langs
-
-    - name: Set _version.py via release tag
-      run: |
-        sed -i "s#.*__version__.*#__version__='${{ steps.validate.outputs.tag }}'#" ./pwnagotchi/_version.py
-        echo "Contents of _version.py after modification:"
-        cat ./pwnagotchi/_version.py
 
     - name: Run Makefile
       run: make
