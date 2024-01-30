@@ -60,6 +60,7 @@ jobs:
         echo "Contents of _version.py after modification:"
         cat /home/runner/work/pwnagotchi/_version.py
 
+        
     - name: Update Languages
       run: make update_langs
     
