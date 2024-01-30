@@ -22,14 +22,14 @@ jobs:
             exit 1
             fi
 
+    - name: Checkout code
+      uses: actions/checkout@v4
+
     - name: Set _version.py via release tag
       run: |
         sed -i "s#.*__version__.*#__version__='${{ steps.validate.outputs.tag }}'#" ./pwnagotchi/_version.py
         echo "Contents of _version.py after modification:"
         cat ./pwnagotchi/_version.py
-
-    - name: Checkout code
-      uses: actions/checkout@v4
 
     - name: Set up Python
       uses: actions/setup-python@v5
