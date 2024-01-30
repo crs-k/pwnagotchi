@@ -69,6 +69,8 @@ jobs:
 
     - name: Run Makefile
       run: make
+      env: 
+        PWN_VERSION: ${{ steps.validate.outputs.tag }}
     
     - name: Search for file location
       run: find /home/runner/work/ -type f -name "*.img"
