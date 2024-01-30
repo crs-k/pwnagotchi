@@ -55,6 +55,7 @@ jobs:
 
     - name: Set _version.py via release tag
       run: |
+        find . -name "_version.py"
         sed -i "s#.*__version__.*#__version__='${{ steps.validate.outputs.tag }}'#" /home/runner/work/pwnagotchi/_version.py
         echo "Contents of _version.py after modification:"
         cat /home/runner/work/pwnagotchi/_version.py
