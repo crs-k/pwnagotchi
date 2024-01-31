@@ -116,9 +116,9 @@ jobs:
           console.log(`Searching for pre-release with tag: ${tag}`)
           const releases = await github.rest.repos.listReleases({ owner, repo })
           console.log(`Found ${releases.data.length} releases`)
-          const release = releases.data.find(r => r.tag_name === tag && r.prerelease === true)
+          const release = releases.data.find(r => r.tag_name === tag && r.prerelease === false)
           if (!release) {
-            throw new Error(`No pre-release found for tag ${tag}`)
+            throw new Error(`No release found for tag ${tag}`)
           }
           console.log(`Returning release with url: ${release.upload_url.replace("{?name,label}", "")}`)
           return release.upload_url.replace("{?name,label}", "")
