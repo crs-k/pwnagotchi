@@ -8,22 +8,20 @@ echo "    Hi! I'm a pwnagotchi $_version"
 echo
 echo "    Config: /etc/pwnagotchi/config.toml"
 echo "    Plugin config: /etc/pwnagotchi/conf.d/"
-echo
 echo "    Config options: /etc/pwnagotchi/default.toml"
 echo "    File is receated on every update, so don't edit it."
 echo
-echo "    oPwnGrid is my main API, you can check stats at https://opwngrid.xyz"
+echo "    oPwnGrid is jayofelony's main API, you can check stats at https://opwngrid.xyz"
 echo
-echo "    Managed by systemd. Here are some basic commands."
-echo
+echo "    Managed by systemd. Here are some basic commands"
 echo "    - pwnlog"
-echo "    - sudo pwnagotchi --version, to check the current version"
-echo "    - sudo pwnagotchi --check-update, to see if there is a new version available"
+echo "    - sudo pwnagotchi --version"
+echo "    - sudo pwnagotchi --check-update"
 echo
-echo "    Service Status:"
+echo "    Service status:"
 echo "    sudo systemctl status pwnagotchi"
 echo
-echo "    You can restart me using"
+echo "    Service restart:"
 echo "    pwnkill"
 echo
 echo "    You learn more about me at https://pwnagotchi.ai/"
