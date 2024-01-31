@@ -28,37 +28,24 @@ jobs:
 
       - name: Download 32-bit base image
         run: |
-          wget -O /home/runner/work/pwnagotchi/32base_image.img.xz https://github.com/crs-k/pwnagotchi/releases/download/${{ github.event.workflow_run.head_branch }}/pwnagotchi-rpi-bullseye-${{ github.event.workflow_run.head_branch }}-armhf.img.xz 
-      
-      - name: Unzip 32-bit base image
-        run: |
-          xz -dv /home/runner/work/pwnagotchi/32base_image.img.xz
-          ls -l /home/runner/work/pwnagotchi/32base_image.img
+          wget https://github.com/crs-k/pwnagotchi/releases/download/${{ github.event.workflow_run.head_branch }}/pwnagotchi-rpi-bullseye-${{ github.event.workflow_run.head_branch }}-armhf.img.xz 
           
       - name: Download and unzip 64-bit base image
         run: |
-          wget -O /home/runner/work/pwnagotchi/64base_image.img.xz https://github.com/crs-k/pwnagotchi/releases/download/${{ github.event.workflow_run.head_branch }}/pwnagotchi-rpi-bullseye-${{ github.event.workflow_run.head_branch }}-arm64.img.xz
-
-      - name: Unzip 64-bit base image
-        run: |
-          xz -dv /home/runner/work/pwnagotchi/64base_image.img.xz
-          ls -l /home/runner/work/pwnagotchi/64base_image.img
-
+          wget https://github.com/crs-k/pwnagotchi/releases/download/${{ github.event.workflow_run.head_branch }}/pwnagotchi-rpi-bullseye-${{ github.event.workflow_run.head_branch }}-arm64.img.xz
 
       - name: Test armv6l - Raspberry Pi Zero W 
         uses: pguyot/arm-runner-action@v2.5.2
         with:
-          base_image: file:/${GITHUB_WORKSPACE}/32base_image.img
-          cpu: arm1176
+          base_image: file://${GITHUB_WORKSPACE}/pwnagotchi-rpi-bullseye-${{ github.event.workflow_run.head_branch }}-armhf.img.xz
           commands: |
-              echo "ARM TEST - Raspberry Pi Zero W"
-              test `uname -m` = 'armv6l'
+            echo "ARM TEST - Raspberry Pi Zero W"
+            test `uname -m` = 'armv6l'
 
       - name: Test 64-bit - Raspberry Pi 02w, 3 and 4
         uses: pguyot/arm-runner-action@v2.5.2
         with:
-          base_image: file:/${GITHUB_WORKSPACE}/64base_image.img
-          cpu: cortex-a53
+          base_image: file:/${GITHUB_WORKSPACE}/pwnagotchi-rpi-bullseye-${{ github.event.workflow_run.head_branch }}-arm64.img.xz
           commands: |
               echo "ARM TEST - Raspberry Pi 02w, 3 and 4"
               test `uname -m` = 'aarch64'
