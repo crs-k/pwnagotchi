@@ -37,7 +37,7 @@ jobs:
       - name: Test armv6l - Raspberry Pi Zero W 
         uses: pguyot/arm-runner-action@v2.5.2
         with:
-          base_image: file://${GITHUB_WORKSPACE}/pwnagotchi-rpi-bullseye-${{ github.event.workflow_run.head_branch }}-armhf.img.xz
+          base_image: file://home/runner/work/pwnagotchi-rpi-bullseye-${{ github.event.workflow_run.head_branch }}-armhf.img.xz
           commands: |
             echo "ARM TEST - Raspberry Pi Zero W"
             test `uname -m` = 'armv6l'
@@ -45,7 +45,7 @@ jobs:
       - name: Test 64-bit - Raspberry Pi 02w, 3 and 4
         uses: pguyot/arm-runner-action@v2.5.2
         with:
-          base_image: file:/${GITHUB_WORKSPACE}/pwnagotchi-rpi-bullseye-${{ github.event.workflow_run.head_branch }}-arm64.img.xz
+          base_image: file://home/runner/work/pwnagotchi-rpi-bullseye-${{ github.event.workflow_run.head_branch }}-arm64.img.xz
           commands: |
               echo "ARM TEST - Raspberry Pi 02w, 3 and 4"
               test `uname -m` = 'aarch64'
