@@ -29,11 +29,11 @@ jobs:
       with:
         script: |
           const version = "${{ steps.validate.outputs.tag }}"
-          console.log(`Creating tag v${version}`)
+          console.log(`Creating tag ${version}`)
           await github.rest.git.createRef({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            ref: `refs/tags/v${version}`,
+            ref: `refs/tags/${version}`,
             sha: context.sha
           })
 
