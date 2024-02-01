@@ -39,20 +39,12 @@ jobs:
 
     - name: Checkout code
       uses: actions/checkout@v4
-
+    
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: 3.9
 
-    - name: Set _version.py with tag
-      run: |
-        rm -f pwnagotchi/_version.py
-        echo "__version__='$PWN_VERSION'" > pwnagotchi/_version.py
-        cat ./pwnagotchi/_version.py
-      env: 
-        PWN_VERSION: ${{ steps.tag-setter.outputs.TAG }}
-          
     - name: Install dependencies
       run: | 
            sudo apt-get update && sudo apt-get install -y libdbus-1-dev curl unzip gettext qemu-utils qemu qemu-user-static binfmt-support
@@ -81,6 +73,15 @@ jobs:
     - name: Compile Languages
       run: make compile_langs
 
+    - name: Set _version.py with tag
+      run: |
+        find . -name "_version.py"
+        rm -f pwnagotchi/_version.py
+        echo "__version__='$PWN_VERSION'" > pwnagotchi/_version.py
+        cat ./pwnagotchi/_version.py
+      env: 
+        PWN_VERSION: ${{ steps.tag-setter.outputs.TAG }}
+    
     - name: Run Makefile
       run: make
       env: 

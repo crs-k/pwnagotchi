@@ -41,9 +41,17 @@ jobs:
       - name: Unzip artifact
         run: unzip artifact.zip
       
-      - name: Load environment variable
+      - name: Validate tag
         id: tag-setter
-        run: echo "TAG=$(cat env_var.txt)" >> $GITHUB_ENV
+        run: |
+              TAG=$(cat env_var.txt)
+              if [[ $TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "Tag $TAG is valid."
+              echo "TAG=$TAG" >> $GITHUB_OUTPUT
+              else
+              echo "Tag $TAG is not a valid semantic version. Aborting."
+              exit 1
+              fi
 
       - name: Install system dependencies
         run: |
@@ -62,14 +70,14 @@ jobs:
         run: |
           wget https://github.com/crs-k/pwnagotchi/releases/download/${{ steps.tag-setter.outputs.TAG }}/pwnagotchi-rpi-bullseye-${{ steps.tag-setter.outputs.TAG }}-armhf.img.xz 
           RESULT=$(find . -name "pwnagotchi-rpi-bullseye-${{ steps.tag-setter.outputs.TAG }}-armhf.img.xz ")
-          echo "out32bit=$RESULT" >> $GITHUB_ENV
+          echo "out32bit=$RESULT" >> $GITHUB_OUTPUT
 
       - name: Download and unzip 64-bit base image
         id: download-64bit
         run: |
           wget https://github.com/crs-k/pwnagotchi/releases/download/${{ steps.tag-setter.outputs.TAG }}/pwnagotchi-rpi-bullseye-${{ steps.tag-setter.outputs.TAG }}-arm64.img.xz
           RESULT2=$(find . -name "pwnagotchi-rpi-bullseye-${{ steps.tag-setter.outputs.TAG }}-armhf.img.xz ")
-          echo "out64bit=$RESULT2" >> $GITHUB_ENV
+          echo "out64bit=$RESULT2" >> $GITHUB_OUTPUT
 
       - name: Test armv6l - Raspberry Pi Zero W 
         uses: pguyot/arm-runner-action@v2.5.2
