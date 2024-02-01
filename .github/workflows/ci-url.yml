@@ -41,9 +41,17 @@ jobs:
       - name: Unzip artifact
         run: unzip artifact.zip
       
-      - name: Load environment variable
+      - name: Validate tag
         id: tag-setter
-        run: echo "TAG=$(cat env_var.txt)" >> $GITHUB_ENV
+        run: |
+              TAG=$(cat env_var.txt)
+              if [[ $TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "Tag $TAG is valid."
+              echo "TAG=$TAG" >> $GITHUB_OUTPUT
+              else
+              echo "Tag $TAG is not a valid semantic version. Aborting."
+              exit 1
+              fi
 
       - name: Install system dependencies
         run: |
