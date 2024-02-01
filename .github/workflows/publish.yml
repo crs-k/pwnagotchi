@@ -28,18 +28,18 @@ jobs:
       run: |
         find . -name "_version.py"
 
-    - name: Create tag
-      uses: actions/github-script@v7
-      with:
-        script: |
-            const version = "${{ steps.tag-setter.outputs.TAG }}"
-            console.log(`Creating tag ${version}`)
-            await github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: `refs/tags/${version}`,
-              sha: context.sha
-            })
+    # - name: Create tag
+    #   uses: actions/github-script@v7
+    #   with:
+    #     script: |
+    #         const version = "${{ steps.tag-setter.outputs.TAG }}"
+    #         console.log(`Creating tag ${version}`)
+    #         await github.rest.git.createRef({
+    #           owner: context.repo.owner,
+    #           repo: context.repo.repo,
+    #           ref: `refs/tags/${version}`,
+    #           sha: context.sha
+    #         })
 
     - name: Checkout code
       uses: actions/checkout@v4
