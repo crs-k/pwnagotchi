@@ -162,15 +162,12 @@ jobs:
         script: |
           const release_id = "${{ steps.create_release.outputs.result }}"
           console.log(`Updating release with id: ${release_id}`)
-    
-          // Update the release
           github.rest.repos.updateRelease({
             owner: context.repo.owner,
             repo: context.repo.repo,
             release_id: release_id,
             tag_name: "${{ steps.validate.outputs.tag }}",
             name: "${{ steps.validate.outputs.tag }}",
-            body: releaseNotes.data.body,
             draft: false,
             prerelease: false
           })
