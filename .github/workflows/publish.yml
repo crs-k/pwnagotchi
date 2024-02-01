@@ -27,17 +27,11 @@ jobs:
             exit 1
             fi
 
-    - name: Set _version.py with tag
-      run: |
-        find . -name "_version.py"
-        rm -f pwnagotchi/_version.py
-        echo "__version__='$PWN_VERSION'" > pwnagotchi/_version.py
-        cat ./pwnagotchi/_version.py
-      env: 
-        PWN_VERSION: ${{ steps.tag-setter.outputs.TAG }}
-
     - uses: actions/checkout@v4
     - run: |
+          rm -f pwnagotchi/_version.py
+          echo "__version__='${{ steps.tag-setter.outputs.TAG }}'" > pwnagotchi/_version.py
+          cat ./pwnagotchi/_version.py
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
