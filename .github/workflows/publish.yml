@@ -24,9 +24,10 @@ jobs:
             exit 1
             fi
 
-    - name: find file
+    - name: find file and display contents
       run: |
-        find . -name "_version.py"
+        FILE=$(find . -name "_version.py")
+        cat $FILE
 
     # - name: Create tag
     #   uses: actions/github-script@v7
@@ -43,12 +44,22 @@ jobs:
 
     - name: Checkout code
       uses: actions/checkout@v4
-
+    
+    - name: find file and display contents
+      run: |
+        FILE=$(find . -name "_version.py")
+        cat $FILE
+    
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: 3.9
-          
+      
+    - name: find file and display contents
+      run: |
+        FILE=$(find . -name "_version.py")
+        cat $FILE
+
     - name: Install dependencies
       run: | 
            sudo apt-get update && sudo apt-get install -y libdbus-1-dev curl unzip gettext qemu-utils qemu qemu-user-static binfmt-support
