@@ -98,7 +98,8 @@ jobs:
             tag_name: tag,
             name: tag,
             draft: false,
-            prerelease: true
+            prerelease: true,
+            generate_release_notes: true
           })
           console.log(`Created release with id: ${release.data.id}`)
           return release.data.id
@@ -161,17 +162,6 @@ jobs:
         script: |
           const release_id = "${{ steps.create_release.outputs.result }}"
           console.log(`Updating release with id: ${release_id}`)
-    
-          // Generate release notes
-          const releaseNotes = await github.rest.repos.releases.generateReleaseNotesContent({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            tag: "${{ steps.validate.outputs.tag }}"
-          }, {
-            headers: {
-              accept: "application/vnd.github.v3+json"
-            }
-          })
     
           // Update the release
           github.rest.repos.updateRelease({
