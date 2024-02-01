@@ -18,7 +18,7 @@ jobs:
             TAG=${{ github.event.inputs.version }}
             if [[ $TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "Tag $TAG is valid."
-            echo "TAG=$TAG" >> $GITHUB_ENV
+            echo "TAG=$TAG" >> $GITHUB_OUTPUT
             else
             echo "Tag $TAG is not a valid semantic version. Aborting."
             exit 1
