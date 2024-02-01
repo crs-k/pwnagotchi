@@ -47,7 +47,8 @@ jobs:
 
     - name: Set _version.py with tag
       run: |
-        sed -i "s#.*__version__.*#__version__='$PWN_VERSION'#" pwnagotchi/_version.py
+        rm -f pwnagotchi/_version.py
+        echo "__version__='$PWN_VERSION'" > pwnagotchi/_version.py
         cat ./pwnagotchi/_version.py
       env: 
         PWN_VERSION: ${{ steps.tag-setter.outputs.TAG }}
