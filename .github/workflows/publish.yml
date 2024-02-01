@@ -82,8 +82,8 @@ jobs:
     - name: Compile Languages
       run: make compile_langs
 
-    - name: Run Makefile
-      run: make
+    #- name: Run Makefile
+    #  run: make
     
     - name: Search for file location
       run: find /home/runner/work/ -type f -name "*.img"
@@ -101,7 +101,7 @@ jobs:
             tag_name: tag,
             name: tag,
             draft: false,
-            prerelease: false
+            prerelease: true
           })
           console.log(`Created release with id: ${release.data.id}`)
           return release.data.id
@@ -116,7 +116,7 @@ jobs:
           console.log(`Searching for pre-release with tag: ${tag}`)
           const releases = await github.rest.repos.listReleases({ owner, repo })
           console.log(`Found ${releases.data.length} releases`)
-          const release = releases.data.find(r => r.tag_name === tag && r.prerelease === false)
+          const release = releases.data.find(r => r.tag_name === tag && r.prerelease === true)
           if (!release) {
             throw new Error(`No release found for tag ${tag}`)
           }
@@ -187,5 +187,5 @@ jobs:
             tag_name: "${{ steps.validate.outputs.tag }}",
             name: "${{ steps.validate.outputs.tag }}",
             draft: false,
-            prerelease: true
+            prerelease: false
           })
