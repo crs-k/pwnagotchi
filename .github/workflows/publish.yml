@@ -169,3 +169,12 @@ jobs:
             draft: false,
             prerelease: false
           })
+
+    - name: Save environment variable
+      run: echo "$TAG" > env_var.txt
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: env-var
+        path: env_var.txt
