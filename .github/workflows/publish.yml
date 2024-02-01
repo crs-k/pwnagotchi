@@ -13,12 +13,11 @@ jobs:
     steps:
 
     - name: Validate tag
-      id: validate
       run: |
             TAG=${{ github.event.inputs.version }}
             if [[ $TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "Tag $TAG is valid."
-            echo "::set-output name=tag::$TAG"
+            echo "TAG=$TAG" >> $GITHUB_ENV
             else
             echo "Tag $TAG is not a valid semantic version. Aborting."
             exit 1
@@ -28,14 +27,14 @@ jobs:
       uses: actions/github-script@v7
       with:
         script: |
-          const version = "${{ steps.validate.outputs.tag }}"
-          console.log(`Creating tag ${version}`)
-          await github.rest.git.createRef({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            ref: `refs/tags/${version}`,
-            sha: context.sha
-          })
+            const version = "$TAG"
+            console.log(`Creating tag ${version}`)
+            await github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `refs/tags/${version}`,
+              sha: context.sha
+            })
 
     - name: Checkout code
       uses: actions/checkout@v4
@@ -45,19 +44,19 @@ jobs:
       with:
         python-version: 3.9
 
-    - name: Set _version.py via release tag
+    - name: Set _version.py with tag
       run: |
-        find . -name '_version.py'
-        sed -i "s#.*__version__.*#__version__='${{ steps.validate.outputs.tag }}'#" ./pwnagotchi/_version.py
-        echo "Contents of _version.py after modification:"
+        sed -i "s#.*__version__.*#__version__='$PWN_VERSION'#" pwnagotchi/_version.py
         cat ./pwnagotchi/_version.py
-    
+      env: 
+        PWN_VERSION: $TAG
+          
     - name: Install dependencies
       run: | 
            sudo apt-get update && sudo apt-get install -y libdbus-1-dev curl unzip gettext qemu-utils qemu qemu-user-static binfmt-support
            pip install -r requirements.txt
 
-    - name: Install QEMU
+    - name: Update QEMU
       run: |
         sudo update-binfmts --enable qemu-arm
         sudo update-binfmts --enable qemu-aarch64
@@ -82,13 +81,19 @@ jobs:
 
     - name: Run Makefile
       run: make
+      env: 
+        PWN_VERSION: $TAG
+
+    - name: Compress .img files
+      run: |
+         find /home/runner/work/ -type f -name "*.img" -exec xz --no-warn {} \;
 
     - name: Create Release
       id: create_release
       uses: actions/github-script@v7
       with:
         script: |
-          const tag = "${{ steps.validate.outputs.tag }}"
+          const tag = "$TAG"
           console.log(`Creating release with tag: ${tag}`)
           const release = await github.rest.repos.createRelease({
             owner: context.repo.owner,
@@ -101,11 +106,6 @@ jobs:
           })
           console.log(`Created release with id: ${release.data.id}`)
           return release.data.id
-
-
-    - name: Compress .img files
-      run: |
-         find /home/runner/work/ -type f -name "*.img" -exec xz --no-warn {} \;
 
     - name: Upload Release Asset
       id: upload-release-asset 
@@ -164,8 +164,8 @@ jobs:
             owner: context.repo.owner,
             repo: context.repo.repo,
             release_id: release_id,
-            tag_name: "${{ steps.validate.outputs.tag }}",
-            name: "${{ steps.validate.outputs.tag }}",
+            tag_name: "$TAG",
+            name: "$TAG",
             draft: false,
             prerelease: false
           })
