@@ -22,6 +22,7 @@ jobs:
           name: env-var
       
       - name: Load environment variable
+        id: tag-setter
         run: echo "TAG=$(cat env_var.txt)" >> $GITHUB_ENV
       - name: Install system dependencies
         run: |
@@ -36,14 +37,14 @@ jobs:
 
       - name: Download 32-bit base image
         run: |
-          wget https://github.com/crs-k/pwnagotchi/releases/download/$TAG/pwnagotchi-rpi-bullseye-$TAG-armhf.img.xz 
-          RESULT=$(find . -name "pwnagotchi-rpi-bullseye-$TAG-armhf.img.xz ")
+          wget https://github.com/crs-k/pwnagotchi/releases/download/${{ STEPS.TAG-SETTER.OUTPUTS.TAG }}/pwnagotchi-rpi-bullseye-${{ STEPS.TAG-SETTER.OUTPUTS.TAG }}-armhf.img.xz 
+          RESULT=$(find . -name "pwnagotchi-rpi-bullseye-${{ STEPS.TAG-SETTER.OUTPUTS.TAG }}-armhf.img.xz ")
           echo "32bit=$RESULT" >> $GITHUB_ENV
 
       - name: Download and unzip 64-bit base image
         run: |
-          wget https://github.com/crs-k/pwnagotchi/releases/download/$TAG/pwnagotchi-rpi-bullseye-$TAG-arm64.img.xz
-          RESULT2=$(find . -name "pwnagotchi-rpi-bullseye-$TAG-armhf.img.xz ")
+          wget https://github.com/crs-k/pwnagotchi/releases/download/${{ STEPS.TAG-SETTER.OUTPUTS.TAG }}/pwnagotchi-rpi-bullseye-${{ STEPS.TAG-SETTER.OUTPUTS.TAG }}-arm64.img.xz
+          RESULT2=$(find . -name "pwnagotchi-rpi-bullseye-${{ STEPS.TAG-SETTER.OUTPUTS.TAG }}-armhf.img.xz ")
           echo "64bit=$RESULT2" >> $GITHUB_ENV
 
       - name: Test armv6l - Raspberry Pi Zero W 
