@@ -5,8 +5,8 @@ on:
     types:
       - completed
 jobs:
-  Build:
-    name: Build
+  ci:
+    name: ci-url
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -25,7 +25,7 @@ jobs:
             const artifact = await github.rest.actions.listWorkflowRunArtifacts({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              run_id: context.workflow_run.id,
+              run_id: github.event.workflow_run.id,
             });
             const artifactData = artifact.data.artifacts[0]; // assuming the artifact you want is the first one
             const download = await github.rest.actions.downloadArtifact({
@@ -58,21 +58,23 @@ jobs:
           pip install -r requirements.txt
 
       - name: Download 32-bit base image
+        id: download-32bit
         run: |
-          wget https://github.com/crs-k/pwnagotchi/releases/download/${{ STEPS.TAG-SETTER.OUTPUTS.TAG }}/pwnagotchi-rpi-bullseye-${{ STEPS.TAG-SETTER.OUTPUTS.TAG }}-armhf.img.xz 
-          RESULT=$(find . -name "pwnagotchi-rpi-bullseye-${{ STEPS.TAG-SETTER.OUTPUTS.TAG }}-armhf.img.xz ")
-          echo "32bit=$RESULT" >> $GITHUB_ENV
+          wget https://github.com/crs-k/pwnagotchi/releases/download/${{ steps.tag-setter.outputs.TAG }}/pwnagotchi-rpi-bullseye-${{ steps.tag-setter.outputs.TAG }}-armhf.img.xz 
+          RESULT=$(find . -name "pwnagotchi-rpi-bullseye-${{ steps.tag-setter.outputs.TAG }}-armhf.img.xz ")
+          echo "out32bit=$RESULT" >> $GITHUB_ENV
 
       - name: Download and unzip 64-bit base image
+        id: download-64bit
         run: |
-          wget https://github.com/crs-k/pwnagotchi/releases/download/${{ STEPS.TAG-SETTER.OUTPUTS.TAG }}/pwnagotchi-rpi-bullseye-${{ STEPS.TAG-SETTER.OUTPUTS.TAG }}-arm64.img.xz
-          RESULT2=$(find . -name "pwnagotchi-rpi-bullseye-${{ STEPS.TAG-SETTER.OUTPUTS.TAG }}-armhf.img.xz ")
-          echo "64bit=$RESULT2" >> $GITHUB_ENV
+          wget https://github.com/crs-k/pwnagotchi/releases/download/${{ steps.tag-setter.outputs.TAG }}/pwnagotchi-rpi-bullseye-${{ steps.tag-setter.outputs.TAG }}-arm64.img.xz
+          RESULT2=$(find . -name "pwnagotchi-rpi-bullseye-${{ steps.tag-setter.outputs.TAG }}-armhf.img.xz ")
+          echo "out64bit=$RESULT2" >> $GITHUB_ENV
 
       - name: Test armv6l - Raspberry Pi Zero W 
         uses: pguyot/arm-runner-action@v2.5.2
         with:
-          base_image: file://$32bit
+          base_image: file://${{ steps.download-32bit.outputs.out32bit }}
           commands: |
             echo "ARM TEST - Raspberry Pi Zero W"
             test `uname -m` = 'armv6l'
@@ -80,7 +82,7 @@ jobs:
       - name: Test 64-bit - Raspberry Pi 02w, 3 and 4
         uses: pguyot/arm-runner-action@v2.5.2
         with:
-          base_image: file://$64bit
+          base_image: file://${{ steps.download-64bit.outputs.out64bit }}
           commands: |
               echo "ARM TEST - Raspberry Pi 02w, 3 and 4"
               test `uname -m` = 'aarch64'
