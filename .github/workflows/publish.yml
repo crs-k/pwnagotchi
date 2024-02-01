@@ -13,6 +13,7 @@ jobs:
     steps:
 
     - name: Validate tag
+      id: tag-setter
       run: |
             TAG=${{ github.event.inputs.version }}
             if [[ $TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
@@ -27,7 +28,7 @@ jobs:
       uses: actions/github-script@v7
       with:
         script: |
-            const version = "$TAG"
+            const version = "${{ steps.tag-setter.outputs.TAG }}"
             console.log(`Creating tag ${version}`)
             await github.rest.git.createRef({
               owner: context.repo.owner,
@@ -49,7 +50,7 @@ jobs:
         sed -i "s#.*__version__.*#__version__='$PWN_VERSION'#" pwnagotchi/_version.py
         cat ./pwnagotchi/_version.py
       env: 
-        PWN_VERSION: $TAG
+        PWN_VERSION: ${{ steps.tag-setter.outputs.TAG }}
           
     - name: Install dependencies
       run: | 
@@ -82,7 +83,7 @@ jobs:
     - name: Run Makefile
       run: make
       env: 
-        PWN_VERSION: $TAG
+        PWN_VERSION: ${{ steps.tag-setter.outputs.TAG }}
 
     - name: Compress .img files
       run: |
@@ -93,7 +94,7 @@ jobs:
       uses: actions/github-script@v7
       with:
         script: |
-          const tag = "$TAG"
+          const tag = "${{ steps.tag-setter.outputs.TAG }}"
           console.log(`Creating release with tag: ${tag}`)
           const release = await github.rest.repos.createRelease({
             owner: context.repo.owner,
@@ -164,14 +165,14 @@ jobs:
             owner: context.repo.owner,
             repo: context.repo.repo,
             release_id: release_id,
-            tag_name: "$TAG",
-            name: "$TAG",
+            tag_name: "${{ steps.tag-setter.outputs.TAG }}",
+            name: "${{ steps.tag-setter.outputs.TAG }}",
             draft: false,
             prerelease: false
           })
 
     - name: Save environment variable
-      run: echo "$TAG" > env_var.txt
+      run: echo "${{ steps.tag-setter.outputs.TAG }}"  > env_var.txt
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
