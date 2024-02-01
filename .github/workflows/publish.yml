@@ -75,20 +75,21 @@ jobs:
 
     - name: Set _version.py with tag
       run: |
+        find . -name "_version.py"
         rm -f pwnagotchi/_version.py
         echo "__version__='$PWN_VERSION'" > pwnagotchi/_version.py
         cat ./pwnagotchi/_version.py
       env: 
         PWN_VERSION: ${{ steps.tag-setter.outputs.TAG }}
     
-    - name: Run Makefile
-      run: make
-      env: 
-        PWN_VERSION: ${{ steps.tag-setter.outputs.TAG }}
+    # - name: Run Makefile
+    #   run: make
+    #   env: 
+    #     PWN_VERSION: ${{ steps.tag-setter.outputs.TAG }}
 
-    - name: Compress .img files
-      run: |
-         find /home/runner/work/ -type f -name "*.img" -exec xz --no-warn {} \;
+    # - name: Compress .img files
+    #   run: |
+    #      find /home/runner/work/ -type f -name "*.img" -exec xz --no-warn {} \;
 
     - name: Create Release
       id: create_release
