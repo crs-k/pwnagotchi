@@ -40,50 +40,48 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.9
+
     - name: Set _version.py via release tag
       run: |
         find . -name '_version.py'
         sed -i "s#.*__version__.*#__version__='${{ steps.validate.outputs.tag }}'#" ./pwnagotchi/_version.py
         echo "Contents of _version.py after modification:"
         cat ./pwnagotchi/_version.py
-
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: 3.9
     
-    # - name: Install dependencies
-    #   run: | 
-    #        sudo apt-get update && sudo apt-get install -y libdbus-1-dev curl unzip gettext qemu-utils 
-    #        pip install -r requirements.txt
+    - name: Install dependencies
+      run: | 
+           sudo apt-get update && sudo apt-get install -y libdbus-1-dev curl unzip gettext qemu-utils qemu qemu-user-static binfmt-support
+           pip install -r requirements.txt
 
-    # - name: Install QEMU
-    #   run: |
-    #     sudo apt-get update
-    #     sudo apt-get install -y qemu qemu-user-static binfmt-support
-    #     sudo update-binfmts --enable qemu-arm
-    #     sudo update-binfmts --enable qemu-aarch64
+    - name: Install QEMU
+      run: |
+        sudo update-binfmts --enable qemu-arm
+        sudo update-binfmts --enable qemu-aarch64
 
-    # - name: Restart binfmt-support
-    #   run: sudo service binfmt-support restart
+    - name: Restart binfmt-support
+      run: sudo service binfmt-support restart
 
-    # - name: Mount binfmt_misc
-    #   run: |
-    #     if ! grep -qs '/proc/sys/fs/binfmt_misc ' /proc/mounts; then
-    #       sudo mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
-    #     fi
+    - name: Mount binfmt_misc
+      run: |
+        if ! grep -qs '/proc/sys/fs/binfmt_misc ' /proc/mounts; then
+          sudo mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
+        fi
 
-    # - name: Restart binfmt-support
-    #   run: sudo service binfmt-support restart
+    - name: Restart binfmt-support
+      run: sudo service binfmt-support restart
         
-    # - name: Update Languages
-    #   run: make update_langs
+    - name: Update Languages
+      run: make update_langs
     
-    # - name: Compile Languages
-    #   run: make compile_langs
+    - name: Compile Languages
+      run: make compile_langs
 
-    # - name: Run Makefile
-    #   run: make
+    - name: Run Makefile
+      run: make
 
     - name: Create Release
       id: create_release
