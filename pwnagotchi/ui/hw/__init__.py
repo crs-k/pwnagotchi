@@ -189,9 +189,6 @@ def display_for(config):
     elif config['ui']['display']['type'] == 'waveshare3in7':
         return
 
-    elif config['ui']['display']['type'] == 'waveshare3in52':
-        return
-
     elif config['ui']['display']['type'] == 'waveshare4in01f':
         return
 
