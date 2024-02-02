@@ -76,7 +76,7 @@ jobs:
         id: download-64bit
         run: |
           wget https://github.com/crs-k/pwnagotchi/releases/download/${{ steps.tag-setter.outputs.TAG }}/pwnagotchi-rpi-bullseye-${{ steps.tag-setter.outputs.TAG }}-arm64.img.xz
-          RESULT2=$(find . -name "pwnagotchi-rpi-bullseye-${{ steps.tag-setter.outputs.TAG }}-armhf.img.xz ")
+          RESULT2=$(find . -name "pwnagotchi-rpi-bullseye-${{ steps.tag-setter.outputs.TAG }}-arm64.img.xz ")
           echo "out64bit=$RESULT2" >> $GITHUB_OUTPUT
 
       - name: Test armv6l - Raspberry Pi Zero W 
