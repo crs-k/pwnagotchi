@@ -28,7 +28,6 @@ jobs:
     - run: |
           rm -f pwnagotchi/_version.py
           echo "__version__='${{ steps.tag-setter.outputs.TAG }}'" > pwnagotchi/_version.py
-          cat ./pwnagotchi/_version.py
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
