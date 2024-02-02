@@ -300,7 +300,9 @@ def load_config(args):
 
     elif config['ui']['display']['type'] in 'waveshare35lcd':
         config['ui']['display']['type'] = 'waveshare35lcd'
-
+    
+    elif config['ui']['display']['type'] in 'waveshare3in52':
+        config['ui']['display']['type'] = 'waveshare3in52'
     else:
         print("unsupported display type %s" % config['ui']['display']['type'])
         sys.exit(1)
