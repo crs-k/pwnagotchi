@@ -13,12 +13,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
+    - name: Remove unnecessary directories
+      run: |
+        sudo rm -rf /usr/share/dotnet
+        sudo rm -rf /opt/ghc
+        sudo rm -rf /usr/local/share/boost
+        sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+
     - name: Check disk space
       run: df -BG
 
     - name: Checkout code
       uses: actions/checkout@v4
-
 
     - name: Validate tag
       id: tag-setter
