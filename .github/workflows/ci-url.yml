@@ -69,15 +69,15 @@ jobs:
         id: download-32bit
         run: |
           wget https://github.com/crs-k/pwnagotchi/releases/download/${{ steps.tag-setter.outputs.TAG }}/pwnagotchi-rpi-bullseye-${{ steps.tag-setter.outputs.TAG }}-armhf.img.xz 
-          RESULT=$(find . -name "pwnagotchi-rpi-bullseye-${{ steps.tag-setter.outputs.TAG }}-armhf.img.xz ")
-          echo "out32bit=$RESULT" >> $GITHUB_OUTPUT
+          out32bit=$(find . -name "pwnagotchi-rpi-bullseye-${{ steps.tag-setter.outputs.TAG }}-armhf.img.xz ")
+          echo "out32bit=$out32bit" >> $GITHUB_OUTPUT
 
       - name: Download and unzip 64-bit base image
         id: download-64bit
         run: |
           wget https://github.com/crs-k/pwnagotchi/releases/download/${{ steps.tag-setter.outputs.TAG }}/pwnagotchi-rpi-bullseye-${{ steps.tag-setter.outputs.TAG }}-arm64.img.xz
-          RESULT2=$(find . -name "pwnagotchi-rpi-bullseye-${{ steps.tag-setter.outputs.TAG }}-arm64.img.xz ")
-          echo "out64bit=$RESULT2" >> $GITHUB_OUTPUT
+          out64bit=$(find . -name "pwnagotchi-rpi-bullseye-${{ steps.tag-setter.outputs.TAG }}-arm64.img.xz ")
+          echo "out64bit=$out64bit" >> $GITHUB_OUTPUT
 
       - name: Test armv6l - Raspberry Pi Zero W 
         uses: pguyot/arm-runner-action@v2.5.2
