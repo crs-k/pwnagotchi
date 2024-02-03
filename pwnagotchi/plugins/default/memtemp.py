@@ -148,8 +148,8 @@ class MemTemp(plugins.Plugin):
                 h_pos = (192, 138)
                 v_pos = (211, 122)
             elif ui.is_waveshare3in52():
-                h_pos = (170, 80)
-                v_pos = (165, 61)
+                h_pos = (220, 195)
+                v_pos = (200, 180)
             else:
                 h_pos = (155, 76)
                 v_pos = (175, 61)

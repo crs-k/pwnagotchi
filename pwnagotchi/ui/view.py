@@ -40,14 +40,14 @@ class View(object):
         self._width = self._layout['width']
         self._height = self._layout['height']
         self._state = State(state={
-            'channel': LabeledValue(color=BLACK, label='CH ', value='00', position=self._layout['channel'],
+            'channel': LabeledValue(color=BLACK, label='CH: ', value='00', position=self._layout['channel'],
                                     label_font=fonts.Bold,
                                     text_font=fonts.Medium),
-            'aps': LabeledValue(color=BLACK, label='APS ', value='0 (00)', position=self._layout['aps'],
+            'aps': LabeledValue(color=BLACK, label='APS: ', value='0 (00)', position=self._layout['aps'],
                                 label_font=fonts.Bold,
                                 text_font=fonts.Medium),
 
-            'uptime': LabeledValue(color=BLACK, label='UP ', value='00:00:00', position=self._layout['uptime'],
+            'uptime': LabeledValue(color=BLACK, label='UP: ', value='00:00:00', position=self._layout['uptime'],
                                    label_font=fonts.Bold,
                                    text_font=fonts.Medium),
 

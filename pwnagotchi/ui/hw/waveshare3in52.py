@@ -12,11 +12,11 @@ class Waveshare3in52(DisplayImpl):
         fonts.setup(16, 14, 16, 70, 31, 15)
         self._layout['width'] = 360
         self._layout['height'] = 240
-        self._layout['face'] = (180, 120)
+        self._layout['face'] = (55, 100)
         self._layout['name'] = (0, 30)
         self._layout['channel'] = (0, 0)
         self._layout['aps'] = (0, 220)
-        self._layout['uptime'] = (100, 0)
+        self._layout['uptime'] = (220, 0)
         self._layout['line1'] = [0, 24, 360, 24]
         self._layout['line2'] = [0, 220, 360, 220]
         self._layout['friend_face'] = (24, 88)
@@ -24,9 +24,9 @@ class Waveshare3in52(DisplayImpl):
         self._layout['shakes'] = (100, 220)
         self._layout['mode'] = (300, 220)
         self._layout['status'] = {
-            'pos': (150, 35),
+            'pos': (130, 35),
             'font': fonts.status_font(fonts.Small),
-            'max': 20
+            'max': 24
         }
         return self._layout
 
