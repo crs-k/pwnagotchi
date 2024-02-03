@@ -13,6 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
+    - name: Check disk space
+      run: df -BG
+
     - name: Checkout code
       uses: actions/checkout@v4
 
@@ -61,7 +64,10 @@ jobs:
     
     - name: Compile Languages
       run: make compile_langs
-    
+
+    - name: Check disk space
+      run: df -BG
+      
     - name: Run Makefile
       run: make
       env: 
