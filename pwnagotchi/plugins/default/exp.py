@@ -181,7 +181,7 @@ class EXP(plugins.Plugin):
                                           position=(int(self.options["lvl_x_coord"]),
                                                     int(self.options["lvl_y_coord"])),
                                           label_font=fonts.Bold, text_font=fonts.Medium))
-        ui.add_element('Exp', LabeledValue(color=BLACK, label='- Exp: ', value=0,
+        ui.add_element('Exp', LabeledValue(color=BLACK, label='Exp: ', value=0,
                                            position=(int(self.options["exp_x_coord"]),
                                                      int(self.options["exp_y_coord"])),
                                            label_font=fonts.Bold, text_font=fonts.Medium))
