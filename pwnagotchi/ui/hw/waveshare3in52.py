@@ -9,10 +9,10 @@ class Waveshare3in52(DisplayImpl):
         super(Waveshare3in52, self).__init__(config, 'waveshare3in52')
 
     def layout(self):
-        fonts.setup(16, 14, 16, 24, 31, 15)
+        fonts.setup(16, 14, 16, 70, 31, 15)
         self._layout['width'] = 360
         self._layout['height'] = 240
-        self._layout['face'] = (0, 100)
+        self._layout['face'] = (180, 120)
         self._layout['name'] = (0, 30)
         self._layout['channel'] = (0, 0)
         self._layout['aps'] = (0, 220)
