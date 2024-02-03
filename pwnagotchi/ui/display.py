@@ -5,6 +5,7 @@ import threading
 import pwnagotchi.plugins as plugins
 import pwnagotchi.ui.hw as hw
 from pwnagotchi.ui.view import View
+from PIL import Image
 
 
 class Display(View):
@@ -103,14 +104,17 @@ class Display(View):
     def is_waveshare2in13d(self):
         return self._implementation.name == 'waveshare2in13d'
 
-    def is_waveshare2in23g(self):
-        return self._implementation.name == 'waveshare2in23g'
+    def is_waveshare2in13g(self):
+        return self._implementation.name == 'waveshare2in13g'
 
     def is_waveshare2in36g(self):
         return self._implementation.name == 'waveshare2in36g'
 
     def is_waveshare2in66(self):
         return self._implementation.name == 'waveshare2in66'
+
+    def is_waveshare2in66b(self):
+        return self._implementation.name == 'waveshare2in66b'
 
     def is_waveshare2in66g(self):
         return self._implementation.name == 'waveshare2in66g'
@@ -229,12 +233,22 @@ class Display(View):
         return img
 
     def _render_thread(self):
-        """Used for non-blocking screen updating."""
-
         while True:
             self._canvas_next_event.wait()
             self._canvas_next_event.clear()
-            self._implementation.render(self._canvas_next)
+
+            if self._canvas_next is None:
+                logging.error("self._canvas_next is None")
+                continue
+
+            if self._implementation is None:
+                logging.error("self._implementation is None")
+                continue
+
+            try:
+                self._implementation.render(self._canvas_next)
+            except Exception as e:
+                logging.error(f"Error rendering canvas: {e}")
 
     def _on_view_rendered(self, img):
         try:
