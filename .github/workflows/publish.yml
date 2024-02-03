@@ -173,10 +173,3 @@ jobs:
       with:
         name: env-var
         path: env_var.txt
-
-
-    - name: Delete branch
-      run: |
-        git push origin :publish
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
