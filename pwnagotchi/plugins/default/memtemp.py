@@ -46,7 +46,7 @@ class MemTemp(plugins.Plugin):
         'freq': 'cpu_freq'
     }
     DEFAULT_FIELDS = ['mem', 'cpu', 'temp']
-    LINE_SPACING = 10
+    LINE_SPACING = 15
     LABEL_SPACING = 0
     FIELD_WIDTH = 4
 
@@ -148,7 +148,7 @@ class MemTemp(plugins.Plugin):
                 h_pos = (192, 138)
                 v_pos = (211, 122)
             elif ui.is_waveshare3in52():
-                h_pos = (220, 195)
+                h_pos = (220, 190)
                 v_pos = (200, 180)
             else:
                 h_pos = (155, 76)

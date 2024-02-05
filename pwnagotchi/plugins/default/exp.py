@@ -177,11 +177,11 @@ class EXP(plugins.Plugin):
 
 
     def on_ui_setup(self, ui):
-        ui.add_element('Lv', LabeledValue(color=BLACK, label='Lvl: ', value=0,
+        ui.add_element('Lv', LabeledValue(color=BLACK, label='Lvl:   ', value=0,
                                           position=(int(self.options["lvl_x_coord"]),
                                                     int(self.options["lvl_y_coord"])),
                                           label_font=fonts.Bold, text_font=fonts.Medium))
-        ui.add_element('Exp', LabeledValue(color=BLACK, label='Exp: ', value=0,
+        ui.add_element('Exp', LabeledValue(color=BLACK, label='Exp   ', value=0,
                                            position=(int(self.options["exp_x_coord"]),
                                                      int(self.options["exp_y_coord"])),
                                            label_font=fonts.Bold, text_font=fonts.Medium))
