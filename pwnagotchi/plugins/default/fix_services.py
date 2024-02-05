@@ -386,9 +386,9 @@ class FixServices(plugins.Plugin):
                 pos = self.options['position'].split(',')
                 pos = [int(x.strip()) for x in pos]
             else:
-                pos = (ui.width() / 2 + 35, ui.height() - 11)
+                pos = (100,200)
 
-            logging.info("Got here")
+            logging.info("Loading fix_services ui component")
             ui.add_element('brcmfmac_status', Text(color=BLACK, value='--', position=pos, font=fonts.Small))
 
     # called when the ui is updated

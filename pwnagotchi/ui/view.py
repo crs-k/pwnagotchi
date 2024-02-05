@@ -40,14 +40,14 @@ class View(object):
         self._width = self._layout['width']
         self._height = self._layout['height']
         self._state = State(state={
-            'channel': LabeledValue(color=BLACK, label='CH: ', value='00', position=self._layout['channel'],
+            'channel': LabeledValue(color=BLACK, label='CH:  ', value='00', position=self._layout['channel'],
                                     label_font=fonts.Bold,
                                     text_font=fonts.Medium),
-            'aps': LabeledValue(color=BLACK, label='APS: ', value='0 (00)', position=self._layout['aps'],
+            'aps': LabeledValue(color=BLACK, label='APS:   ', value='0 (00)', position=self._layout['aps'],
                                 label_font=fonts.Bold,
                                 text_font=fonts.Medium),
 
-            'uptime': LabeledValue(color=BLACK, label='UP: ', value='00:00:00', position=self._layout['uptime'],
+            'uptime': LabeledValue(color=BLACK, label='UP:  ', value='00:00:00', position=self._layout['uptime'],
                                    label_font=fonts.Bold,
                                    text_font=fonts.Medium),
 
@@ -59,7 +59,7 @@ class View(object):
             # 'friend_face': Text(value=None, position=self._layout['friend_face'], font=fonts.Bold, color=BLACK),
             'friend_name': Text(value=None, position=self._layout['friend_name'], font=fonts.BoldSmall, color=BLACK),
 
-            'name': Text(value='%s>' % 'pwnagotchi', position=self._layout['name'], color=BLACK, font=fonts.Bold),
+            'name': Text(value='%s' % 'pwnagotchi', position=self._layout['name'], color=BLACK, font=fonts.Bold),
 
             'status': Text(value=self._voice.default(),
                            position=self._layout['status']['pos'],
@@ -69,7 +69,7 @@ class View(object):
                            # the current maximum number of characters per line, assuming each character is 6 pixels wide
                            max_length=self._layout['status']['max']),
 
-            'shakes': LabeledValue(label='PWND ', value='0 (00)', color=BLACK,
+            'shakes': LabeledValue(label='PWND:    ', value='0 (00)', color=BLACK,
                                    position=self._layout['shakes'], label_font=fonts.Bold,
                                    text_font=fonts.Medium),
             'mode': Text(value='AUTO', position=self._layout['mode'],
@@ -135,7 +135,7 @@ class View(object):
         return self._state.get(key)
 
     def on_starting(self):
-        self.set('status', self._voice.on_starting() + ("\n(v%s)" % pwnagotchi.__version__))
+        self.set('status', self._voice.on_starting() + (" (%s)" % pwnagotchi.__version__))
         self.set('face', faces.AWAKE)
         self.update()
 

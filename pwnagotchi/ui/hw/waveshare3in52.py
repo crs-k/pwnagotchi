@@ -9,24 +9,24 @@ class Waveshare3in52(DisplayImpl):
         super(Waveshare3in52, self).__init__(config, 'waveshare3in52')
 
     def layout(self):
-        fonts.setup(16, 14, 16, 70, 31, 15)
+        fonts.setup(16, 14, 16, 100, 31, 15)
         self._layout['width'] = 360
         self._layout['height'] = 240
-        self._layout['face'] = (55, 100)
-        self._layout['name'] = (0, 30)
-        self._layout['channel'] = (0, 0)
+        self._layout['face'] = (0, 40)
+        self._layout['name'] = (0, 0)
+        self._layout['channel'] = (300, 0)
         self._layout['aps'] = (0, 220)
-        self._layout['uptime'] = (220, 0)
+        self._layout['uptime'] = (120, 0)
         self._layout['line1'] = [0, 24, 360, 24]
         self._layout['line2'] = [0, 220, 360, 220]
-        self._layout['friend_face'] = (24, 88)
-        self._layout['friend_name'] = (1, 103)
+        self._layout['friend_face'] = (0, 195)
+        self._layout['friend_name'] = (0, 185)
         self._layout['shakes'] = (100, 220)
-        self._layout['mode'] = (300, 220)
+        self._layout['mode'] = (0,200)
         self._layout['status'] = {
-            'pos': (130, 35),
+            'pos': (3, 170),
             'font': fonts.status_font(fonts.Small),
-            'max': 24
+            'max': 100
         }
         return self._layout
 
@@ -38,8 +38,17 @@ class Waveshare3in52(DisplayImpl):
         self._display.Clear()
 
     def render(self, canvas):
+        self._display.Clear()
         buf = self._display.getbuffer(canvas)
-        self._display.displayPartial(buf)
+        self._display.display(buf)
+        #self._display.send_command(0x17)
+        #self._display.send_data(0xA5)
+        self._display.refresh()
+        #self.send_command(0x13)  # Transfer new data
+        #self.send_data2(buf)
+        #self.send_command(0x12)  # Update the display
+        #self._display.send_command(0x17)
+        #self._display.send_data(0xA5)
 
     def clear(self):
         self._display.Clear()
