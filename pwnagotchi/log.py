@@ -231,10 +231,12 @@ def setup_logging(args, config):
 
         file_handler = logging.FileHandler(filename)
         file_handler.setFormatter(formatter)
+        file_handler.addHandler(RichHandler(rich_tracebacks=True))
         root.addHandler(file_handler)
 
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
+    console_handler.addHandler(RichHandler(rich_tracebacks=True))
     root.addHandler(console_handler)
 
     if not args.debug:
